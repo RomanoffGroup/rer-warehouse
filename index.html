@@ -281,7 +281,7 @@ let histData = [];
 let scriptUrl = '';
 
 try { histData  = JSON.parse(localStorage.getItem('fs_hist') || '[]'); } catch(e) { histData = []; }
-try { scriptUrl = localStorage.getItem('fs_script_url') || ''; } catch(e) {}
+scriptUrl = 'https://script.google.com/macros/s/AKfycbyOqpMUD6_yXGerlyD_JRWBoaIGyVNmUxWPPydeJZtidHShpoSOQzZgJEOa14Qu26bh/exec';
 
 // ── BAKED CATALOG (replaced by setup script at deploy time) ────
 // BAKED_CATALOG_PLACEHOLDER
@@ -607,10 +607,7 @@ function openReview(type) {
 
 // ── SEND TO SHEETS ─────────────────────────────────────────────
 async function sendToSheets(type, worker, project, dateVal, email, cart, ts) {
-  if (!scriptUrl) {
-    showSS('idle', '&#9888; No Google Sheets URL configured. Data saved to local history only.');
-    return;
-  }
+  // scriptUrl is hardcoded - always configured
   showSS('sending', '&#8987; Sending to Google Sheets...');
   const payload = {
     type: type === 'ord' ? 'order' : 'return',
@@ -734,7 +731,7 @@ function toggleHist(id) { document.getElementById('hb_' + id).classList.toggle('
 
 async function resendToSheets(id) {
   const e = histData.find(x => x.id === id); if (!e) return;
-  if (!scriptUrl) { alert('No Google Sheets URL configured.'); return; }
+  // scriptUrl always configured
   const btn = event.target; btn.textContent = 'Sending...'; btn.disabled = true;
   const payload = {
     type: e.type === 'ord' ? 'order' : 'return',
