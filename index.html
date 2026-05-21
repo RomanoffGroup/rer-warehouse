@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FieldStock">
+<meta name="theme-color" content="#FF6B00">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>FieldStock</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--or:#FF6B00;--or2:#cc5500;--dk:#111214;--md:#1C1E22;--pn:#242629;--br:#2E3035;--tx:#E8E9EB;--mu:#7A7D85;--gn:#22C55E;--rd:#EF4444;--bl:#3B82F6;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Barlow',sans-serif;background:var(--dk);color:var(--tx);min-height:100dvh;overflow-x:hidden;}
+header{background:var(--md);border-bottom:2px solid var(--or);padding:10px 14px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;letter-spacing:1px;}
+.logo span{color:var(--or);}
+.ltog{display:flex;background:var(--dk);border:1px solid var(--br);border-radius:20px;padding:3px;gap:2px;}
+.lbtn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:16px;border:none;cursor:pointer;background:transparent;color:var(--mu);transition:all 0.2s;}
+.lbtn.active{background:var(--or);color:#fff;}
+.navtabs{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--md);border-bottom:1px solid var(--br);}
+.ntab{padding:12px 4px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--mu);cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;}
+.ntab.active{color:var(--or);border-bottom-color:var(--or);}
+.ntab.rt.active{color:var(--bl);border-bottom-color:var(--bl);}
+.ntab.ht.active{color:var(--gn);border-bottom-color:var(--gn);}
+.page{display:none;padding:14px;max-width:600px;margin:0 auto;}
+.page.active{display:block;}
+.card{background:var(--pn);border:1px solid var(--br);border-radius:10px;padding:14px;margin-bottom:12px;}
+.sec{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--br);}
+.cl{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:6px;}
+input[type=text],input[type=email],input[type=date],input[type=number]{width:100%;background:var(--md);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:'Barlow',sans-serif;font-size:15px;padding:11px 13px;outline:none;transition:border-color 0.2s;-webkit-appearance:none;display:block;}
+input:focus{border-color:var(--or);}
+.ret-page input:focus{border-color:var(--bl);}
+input[type=number]{-moz-appearance:textfield;text-align:center;}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+.sw{position:relative;}
+.sw input{padding-left:38px;}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mu);pointer-events:none;}
+.sr{background:var(--md);border:1px solid var(--br);border-top:none;border-radius:0 0 8px 8px;max-height:220px;overflow-y:auto;display:none;}
+.sr.open{display:block;}
+.ri{padding:11px 13px;cursor:pointer;border-bottom:1px solid var(--br);font-size:14px;font-weight:600;transition:background 0.12s;}
+.ri:last-child{border-bottom:none;}
+.ri:active{background:var(--pn);}
+.il{display:flex;flex-direction:column;gap:10px;}
+.ir{background:var(--md);border:1px solid var(--br);border-radius:8px;padding:12px;animation:si 0.18s ease;}
+@keyframes si{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:translateY(0);}}
+.itop{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;}
+.iname{font-size:14px;font-weight:600;flex:1;line-height:1.35;}
+.rmbtn{width:28px;height:28px;border:none;background:transparent;color:var(--rd);font-size:16px;cursor:pointer;flex-shrink:0;}
+.qrow{display:flex;align-items:center;gap:8px;}
+.ql{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mu);white-space:nowrap;}
+.qc{display:flex;align-items:center;gap:5px;margin-left:auto;}
+.qbtn{width:34px;height:34px;border-radius:6px;border:1px solid var(--br);background:var(--pn);color:var(--tx);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none;}
+.qbtn:active{background:var(--or);}
+.ret-page .qbtn:active{background:var(--bl);}
+.qi{width:54px!important;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;padding:6px 4px!important;border-radius:6px;}
+.rw{margin-top:9px;}
+.ri2{font-size:13px!important;padding:8px 10px!important;}
+.empty{text-align:center;padding:24px 12px;color:var(--mu);font-size:14px;line-height:1.6;}
+.eico{font-size:32px;margin-bottom:8px;}
+.sbar{background:var(--pn);border:1px solid var(--br);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.sl{font-size:12px;color:var(--mu);margin-bottom:2px;}
+.sc{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--or);}
+.ret-page .sc{color:var(--bl);}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:all 0.2s;}
+.bto{background:var(--or);color:#fff;}.bto:active{background:var(--or2);transform:scale(0.98);}
+.btb{background:var(--bl);color:#fff;}.btb:active{background:#2563eb;transform:scale(0.98);}
+.btg{background:transparent;color:var(--mu);border:1px solid var(--br);font-size:13px;padding:11px;margin-top:8px;}
+/* OUTPUT TABLE */
+.etw{overflow-x:auto;border-radius:8px;border:1px solid var(--br);margin-bottom:12px;}
+.et{width:100%;border-collapse:collapse;font-size:13px;}
+.et th{background:var(--md);color:var(--mu);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 10px;text-align:left;white-space:nowrap;border-bottom:2px solid var(--or);}
+.et th.cn{text-align:center;}
+.ret-modal .et th{border-bottom-color:var(--bl);}
+.et td{padding:9px 10px;border-bottom:1px solid var(--br);vertical-align:middle;color:var(--tx);font-weight:600;user-select:text;cursor:text;}
+.et td.idx{color:var(--mu);font-size:12px;font-weight:400;text-align:center;}
+.et td.qty{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;text-align:center;color:var(--or);}
+.ret-modal .et td.qty{color:var(--bl);}
+.et td.code{color:var(--mu);font-size:12px;text-align:center;font-family:monospace;}
+.et td.rsn{color:var(--mu);font-size:12px;font-weight:400;font-style:italic;}
+.et tr:nth-child(even) td{background:var(--pn);}
+.et tr:nth-child(odd) td{background:var(--md);}
+.et tfoot td{background:var(--dk);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mu);padding:9px 10px;user-select:text;}
+.et tfoot td.tv{font-size:24px;font-weight:900;text-align:center;color:var(--or);}
+.ret-modal .et tfoot td.tv{color:var(--bl);}
+/* SEND STATUS */
+.ss{border-radius:8px;padding:12px 14px;margin-bottom:10px;font-size:13px;line-height:1.6;display:none;}
+.ss.show{display:block;}
+.ss-sending{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:var(--bl);}
+.ss-ok{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:var(--gn);}
+.ss-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--rd);}
+.ss-idle{background:rgba(255,107,0,0.1);border:1px solid rgba(255,107,0,0.3);color:var(--or);}
+/* COPY BTN */
+.cpbtn{width:100%;padding:12px;border:none;border-radius:8px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--or);color:#fff;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;}
+.cpbtn:active{background:var(--or2);}
+.cpbtn.copied{background:#14532d;color:var(--gn);}
+.cpnote{font-size:11px;color:var(--mu);text-align:center;line-height:1.5;}
+/* HISTORY */
+.he{background:var(--pn);border:1px solid var(--br);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.hh{padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+.hh:active{background:var(--md);}
+.hbg{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:2px 7px;border-radius:4px;margin-bottom:4px;display:inline-block;}
+.hbo{background:rgba(255,107,0,0.15);color:var(--or);}
+.hbr{background:rgba(59,130,246,0.15);color:var(--bl);}
+.ht{font-size:14px;font-weight:600;}
+.hm{font-size:12px;color:var(--mu);margin-top:2px;}
+.hcnt{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--mu);text-align:right;}
+.hbd{display:none;border-top:1px solid var(--br);padding:12px 14px;}
+.hbd.open{display:block;}
+.hacts{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.habtn{flex:1;min-width:90px;padding:9px 6px;border-radius:8px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.hrs{background:rgba(255,107,0,0.1);border:1px solid rgba(255,107,0,0.3);color:var(--or);}
+.hcp{background:var(--pn);border:1px solid var(--br);color:var(--tx);}
+.hdl{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:var(--rd);}
+/* MODAL */
+.mbg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.mbg.open{opacity:1;pointer-events:all;}
+.modal{background:var(--pn);width:100%;border-radius:18px 18px 0 0;padding:20px 16px 36px;transform:translateY(40px);transition:transform 0.3s ease;max-height:92dvh;overflow-y:auto;}
+.mbg.open .modal{transform:translateY(0);}
+.mt{font-family:'Barlow Condensed',sans-serif;font-size:21px;font-weight:900;margin-bottom:12px;text-align:center;}
+.mdv{border:none;border-top:1px solid var(--br);margin:14px 0;}
+.hidden{display:none!important;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Field<span>Stock</span></div>
+  <div class="ltog">
+    <button class="lbtn active" id="btnEN" onclick="setLang('en')">EN</button>
+    <button class="lbtn" id="btnES" onclick="setLang('es')">ES</button>
+  </div>
+</header>
+
+<div class="navtabs">
+  <div class="ntab active" id="nOrd" onclick="showPage('ord')">&#128230; <span class="t" data-en="Order" data-es="Pedido">Order</span></div>
+  <div class="ntab rt"    id="nRet" onclick="showPage('ret')">&#8617;&#65039; <span class="t" data-en="Return" data-es="Devolver">Return</span></div>
+  <div class="ntab ht"   id="nHist" onclick="showPage('hist')">&#128344; <span class="t" data-en="History" data-es="Historial">History</span></div>
+</div>
+
+<!-- ORDER PAGE -->
+<div class="page active" id="pOrd">
+  <div class="card">
+    <div class="sec t" data-en="Worker &amp; Job Info" data-es="Trabajador e Info">Worker &amp; Job Info</div>
+    <div style="display:grid;gap:10px;">
+      <div><div class="cl t" data-en="Your Name" data-es="Tu Nombre">Your Name</div>
+        <input type="text" id="oWorker" placeholder="e.g. Mike Torres"></div>
+      <div><div class="cl t" data-en="Project / Job #" data-es="Proyecto / Trabajo #">Project / Job #</div>
+        <input type="text" id="oProject" placeholder="e.g. Eastside Substation #2241"></div>
+      <div><div class="cl t" data-en="Delivery Date Needed" data-es="Fecha de Entrega">Delivery Date Needed</div>
+        <input type="date" id="oDate"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec t" data-en="Search &amp; Add Materials" data-es="Buscar Materiales">Search &amp; Add Materials</div>
+    <div class="sw">
+      <span class="si">&#128269;</span>
+      <input type="text" id="oSearch" placeholder="Search by name..." oninput="doSearch('ord')" autocomplete="off" autocorrect="off">
+    </div>
+    <div class="sr" id="oRes"></div>
+  </div>
+  <div class="sbar">
+    <div><div class="sl t" data-en="Total Units" data-es="Unidades Totales">Total Units</div><div class="sc" id="oUnits">0</div></div>
+    <div style="text-align:right"><div class="sl t" data-en="Line Items" data-es="Lineas">Line Items</div><div class="sc" id="oLines">0</div></div>
+  </div>
+  <div class="il" id="oList">
+    <div class="empty"><div class="eico">&#128203;</div><span class="t" data-en="No items yet - search above." data-es="Sin articulos - busca arriba.">No items yet - search above.</span></div>
+  </div>
+  <div style="margin-top:16px;">
+    <div class="cl t" data-en="Recipient Email" data-es="Correo Destinatario">Recipient Email</div>
+    <input type="email" id="oEmail" placeholder="warehouse@company.com" style="margin-bottom:12px;">
+    <button class="btn bto" onclick="openReview('ord')">
+      <span class="t" data-en="Review &amp; Submit Order" data-es="Revisar y Enviar Pedido">Review &amp; Submit Order</span>
+    </button>
+  </div>
+</div>
+
+<!-- RETURN PAGE -->
+<div class="page ret-page" id="pRet">
+  <div class="card">
+    <div class="sec t" data-en="Worker &amp; Job Info" data-es="Trabajador e Info">Worker &amp; Job Info</div>
+    <div style="display:grid;gap:10px;">
+      <div><div class="cl t" data-en="Your Name" data-es="Tu Nombre">Your Name</div>
+        <input type="text" id="rWorker" placeholder="e.g. Mike Torres"></div>
+      <div><div class="cl t" data-en="Project / Job #" data-es="Proyecto / Trabajo #">Project / Job #</div>
+        <input type="text" id="rProject" placeholder="e.g. Eastside Substation #2241"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec t" data-en="Search Materials to Return" data-es="Buscar Materiales a Devolver">Search Materials to Return</div>
+    <div class="sw">
+      <span class="si">&#128269;</span>
+      <input type="text" id="rSearch" placeholder="Search by name..." oninput="doSearch('ret')" autocomplete="off" autocorrect="off">
+    </div>
+    <div class="sr" id="rRes"></div>
+  </div>
+  <div class="sbar">
+    <div><div class="sl t" data-en="Total Units" data-es="Unidades Totales">Total Units</div><div class="sc" id="rUnits">0</div></div>
+    <div style="text-align:right"><div class="sl t" data-en="Line Items" data-es="Lineas">Line Items</div><div class="sc" id="rLines">0</div></div>
+  </div>
+  <div class="il" id="rList">
+    <div class="empty"><div class="eico">&#8617;</div><span class="t" data-en="No items yet - search above." data-es="Sin articulos - busca arriba.">No items yet - search above.</span></div>
+  </div>
+  <div style="margin-top:16px;">
+    <div class="cl t" data-en="Recipient Email" data-es="Correo Destinatario">Recipient Email</div>
+    <input type="email" id="rEmail" placeholder="warehouse@company.com" style="margin-bottom:12px;">
+    <button class="btn btb" onclick="openReview('ret')">
+      <span class="t" data-en="Review &amp; Submit Return" data-es="Revisar y Enviar Devolucion">Review &amp; Submit Return</span>
+    </button>
+  </div>
+</div>
+
+<!-- HISTORY PAGE -->
+<div class="page" id="pHist">
+  <div class="sw" style="margin-bottom:12px;">
+    <span class="si">&#128269;</span>
+    <input type="text" id="hSearch" placeholder="Search by worker, project..." oninput="renderHistory()">
+  </div>
+  <div id="histList">
+    <div class="empty"><div class="eico">&#128344;</div><span class="t" data-en="No history yet." data-es="Sin historial aun.">No history yet.</span></div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="mbg" id="mbg" onclick="bgClick(event)">
+  <div class="modal" id="modalInner">
+
+    <!-- REVIEW STATE -->
+    <div id="mReview">
+      <div class="mt" id="mTitle">Review Order</div>
+      <div style="background:var(--md);border:1px solid var(--br);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:13px;line-height:1.9;" id="pvSummary"></div>
+      <div class="ss" id="sendStatus"></div>
+      <div class="etw"><table class="et" id="emailTable"></table></div>
+      <textarea id="emailBox" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;" readonly></textarea>
+      <button class="cpbtn" id="copyEmail" onclick="copyEmail()">
+        &#128203; <span class="t" data-en="Copy as Email Text" data-es="Copiar Correo">Copy as Email Text</span>
+      </button>
+      <div class="cpnote t" data-en="Tap any table cell to select and copy it individually." data-es="Toca cualquier celda para seleccionarla.">Tap any table cell to select and copy it individually.</div>
+      <hr class="mdv">
+      <button class="btn bto" id="confirmBtn" onclick="submitDone()">
+        &#10003; <span class="t" data-en="Done" data-es="Listo">Done</span>
+      </button>
+      <button class="btn btg" onclick="closeModal()">
+        <span class="t" data-en="Cancel" data-es="Cancelar">Cancel</span>
+      </button>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div id="mSuccess" class="hidden">
+      <div style="font-size:50px;text-align:center;display:block;margin-bottom:10px;animation:pop 0.4s cubic-bezier(0.34,1.56,0.64,1);">&#127881;</div>
+      <div class="mt" id="sTitle"></div>
+      <div style="text-align:center;font-size:14px;color:var(--mu);margin-bottom:18px;line-height:1.5;" id="sMsg"></div>
+      <button class="btn bto" onclick="resetAndClose()">
+        <span class="t" data-en="Start New" data-es="Nuevo">Start New</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+@keyframes pop{from{transform:scale(0.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+let lang = 'en';
+let activeModal = null;
+let catalog = [];
+let carts = { ord: [], ret: [] };
+let histData = [];
+let scriptUrl = '';
+
+try { histData  = JSON.parse(localStorage.getItem('fs_hist') || '[]'); } catch(e) { histData = []; }
+try { scriptUrl = localStorage.getItem('fs_script_url') || ''; } catch(e) {}
+
+// ── BAKED CATALOG (replaced by setup script at deploy time) ────
+// CATALOG BAKED IN BY SETUP SCRIPT (688 items)
+const BAKED_CATALOG = [\n  {name:'905-11600-000',nameEs:'905-11600-000',code:'905-11600-000'},
+  {name:'905-12100-000',nameEs:'905-12100-000',code:'905-12100-000'},
+  {name:'905-11550-000',nameEs:'905-11550-000',code:'905-11550-000'},
+  {name:'905-10950-000',nameEs:'905-10950-000',code:'905-10950-000'},
+  {name:'905-21250-000',nameEs:'905-21250-000',code:'905-21250-000'},
+  {name:'905-11400-000',nameEs:'905-11400-000',code:'905-11400-000'},
+  {name:'145-11500-000',nameEs:'145-11500-000',code:'145-11500-000'},
+  {name:'900-11200-000',nameEs:'900-11200-000',code:'900-11200-000'},
+  {name:'900-11150-000',nameEs:'900-11150-000',code:'900-11150-000'},
+  {name:'900-11000-000',nameEs:'900-11000-000',code:'900-11000-000'},
+  {name:'145-10050-000',nameEs:'145-10050-000',code:'145-10050-000'},
+  {name:'100-12000-000',nameEs:'100-12000-000',code:'100-12000-000'},
+  {name:'125-21200-000',nameEs:'125-21200-000',code:'125-21200-000'},
+  {name:'900-14000-000',nameEs:'900-14000-000',code:'900-14000-000'},
+  {name:'145-10850-000',nameEs:'145-10850-000',code:'145-10850-000'},
+  {name:'125-12400-000',nameEs:'125-12400-000',code:'125-12400-000'},
+  {name:'145-11450-000',nameEs:'145-11450-000',code:'145-11450-000'},
+  {name:'100-11750-000',nameEs:'100-11750-000',code:'100-11750-000'},
+  {name:'125-11550-000',nameEs:'125-11550-000',code:'125-11550-000'},
+  {name:'125-23600-000',nameEs:'125-23600-000',code:'125-23600-000'},
+  {name:'120-20550-000',nameEs:'120-20550-000',code:'120-20550-000'},
+  {name:'135-11550-000',nameEs:'135-11550-000',code:'135-11550-000'},
+  {name:'135-11450-000',nameEs:'135-11450-000',code:'135-11450-000'},
+  {name:'100-11700-000',nameEs:'100-11700-000',code:'100-11700-000'},
+  {name:'105-30400-000',nameEs:'105-30400-000',code:'105-30400-000'},
+  {name:'100-12350-000',nameEs:'100-12350-000',code:'100-12350-000'},
+  {name:'100-12450-000',nameEs:'100-12450-000',code:'100-12450-000'},
+  {name:'100-12400-000',nameEs:'100-12400-000',code:'100-12400-000'},
+  {name:'100-12550-000',nameEs:'100-12550-000',code:'100-12550-000'},
+  {name:'100-12500-000',nameEs:'100-12500-000',code:'100-12500-000'},
+  {name:'100-11950-000',nameEs:'100-11950-000',code:'100-11950-000'},
+  {name:'100-11900-000',nameEs:'100-11900-000',code:'100-11900-000'},
+  {name:'100-12100-000',nameEs:'100-12100-000',code:'100-12100-000'},
+  {name:'100-12250-000',nameEs:'100-12250-000',code:'100-12250-000'},
+  {name:'100-12300-000',nameEs:'100-12300-000',code:'100-12300-000'},
+  {name:'100-12050-000',nameEs:'100-12050-000',code:'100-12050-000'},
+  {name:'100-10600-000',nameEs:'100-10600-000',code:'100-10600-000'},
+  {name:'100-10150-000',nameEs:'100-10150-000',code:'100-10150-000'},
+  {name:'100-10550-000',nameEs:'100-10550-000',code:'100-10550-000'},
+  {name:'100-10500-000',nameEs:'100-10500-000',code:'100-10500-000'},
+  {name:'100-14200-000',nameEs:'100-14200-000',code:'100-14200-000'},
+  {name:'100-14150-000',nameEs:'100-14150-000',code:'100-14150-000'},
+  {name:'100-14100-000',nameEs:'100-14100-000',code:'100-14100-000'},
+  {name:'100-10900-000',nameEs:'100-10900-000',code:'100-10900-000'},
+  {name:'100-10050-000',nameEs:'100-10050-000',code:'100-10050-000'},
+  {name:'100-10400-000',nameEs:'100-10400-000',code:'100-10400-000'},
+  {name:'100-12700-000',nameEs:'100-12700-000',code:'100-12700-000'},
+  {name:'100-14850-000',nameEs:'100-14850-000',code:'100-14850-000'},
+  {name:'100-14900-000',nameEs:'100-14900-000',code:'100-14900-000'},
+  {name:'100-14750-000',nameEs:'100-14750-000',code:'100-14750-000'},
+  {name:'100-14550-000',nameEs:'100-14550-000',code:'100-14550-000'},
+  {name:'100-14500-000',nameEs:'100-14500-000',code:'100-14500-000'},
+  {name:'105-13300-000',nameEs:'105-13300-000',code:'105-13300-000'},
+  {name:'105-18500-000',nameEs:'105-18500-000',code:'105-18500-000'},
+  {name:'105-24400-000',nameEs:'105-24400-000',code:'105-24400-000'},
+  {name:'105-25200-000',nameEs:'105-25200-000',code:'105-25200-000'},
+  {name:'105-12650-000',nameEs:'105-12650-000',code:'105-12650-000'},
+  {name:'105-13350-000',nameEs:'105-13350-000',code:'105-13350-000'},
+  {name:'105-18700-000',nameEs:'105-18700-000',code:'105-18700-000'},
+  {name:'105-24450-000',nameEs:'105-24450-000',code:'105-24450-000'},
+  {name:'105-25500-000',nameEs:'105-25500-000',code:'105-25500-000'},
+  {name:'105-12750-000',nameEs:'105-12750-000',code:'105-12750-000'},
+  {name:'105-15250-000',nameEs:'105-15250-000',code:'105-15250-000'},
+  {name:'105-18850-000',nameEs:'105-18850-000',code:'105-18850-000'},
+  {name:'105-16575-000',nameEs:'105-16575-000',code:'105-16575-000'},
+  {name:'105-26500-000',nameEs:'105-26500-000',code:'105-26500-000'},
+  {name:'105-33200-000',nameEs:'105-33200-000',code:'105-33200-000'},
+  {name:'105-14300-000',nameEs:'105-14300-000',code:'105-14300-000'},
+  {name:'105-18300-000',nameEs:'105-18300-000',code:'105-18300-000'},
+  {name:'105-23200-000',nameEs:'105-23200-000',code:'105-23200-000'},
+  {name:'105-25050-000',nameEs:'105-25050-000',code:'105-25050-000'},
+  {name:'105-11300-000',nameEs:'105-11300-000',code:'105-11300-000'},
+  {name:'105-14350-000',nameEs:'105-14350-000',code:'105-14350-000'},
+  {name:'105-18550-000',nameEs:'105-18550-000',code:'105-18550-000'},
+  {name:'105-23350-000',nameEs:'105-23350-000',code:'105-23350-000'},
+  {name:'105-25300-000',nameEs:'105-25300-000',code:'105-25300-000'},
+  {name:'105-11350-000',nameEs:'105-11350-000',code:'105-11350-000'},
+  {name:'105-17600-000',nameEs:'105-17600-000',code:'105-17600-000'},
+  {name:'105-18410-000',nameEs:'105-18410-000',code:'105-18410-000'},
+  {name:'105-23300-000',nameEs:'105-23300-000',code:'105-23300-000'},
+  {name:'105-25100-000',nameEs:'105-25100-000',code:'105-25100-000'},
+  {name:'105-12350-000',nameEs:'105-12350-000',code:'105-12350-000'},
+  {name:'105-17650-000',nameEs:'105-17650-000',code:'105-17650-000'},
+  {name:'105-18750-000',nameEs:'105-18750-000',code:'105-18750-000'},
+  {name:'105-23450-000',nameEs:'105-23450-000',code:'105-23450-000'},
+  {name:'105-25550-000',nameEs:'105-25550-000',code:'105-25550-000'},
+  {name:'105-12400-000',nameEs:'105-12400-000',code:'105-12400-000'},
+  {name:'105-14400-000',nameEs:'105-14400-000',code:'105-14400-000'},
+  {name:'105-19100-000',nameEs:'105-19100-000',code:'105-19100-000'},
+  {name:'105-23700-000',nameEs:'105-23700-000',code:'105-23700-000'},
+  {name:'105-26900-000',nameEs:'105-26900-000',code:'105-26900-000'},
+  {name:'105-11600-000',nameEs:'105-11600-000',code:'105-11600-000'},
+  {name:'105-14450-000',nameEs:'105-14450-000',code:'105-14450-000'},
+  {name:'105-19150-000',nameEs:'105-19150-000',code:'105-19150-000'},
+  {name:'105-23750-000',nameEs:'105-23750-000',code:'105-23750-000'},
+  {name:'105-27050-000',nameEs:'105-27050-000',code:'105-27050-000'},
+  {name:'105-11650-000',nameEs:'105-11650-000',code:'105-11650-000'},
+  {name:'105-14500-000',nameEs:'105-14500-000',code:'105-14500-000'},
+  {name:'105-19200-000',nameEs:'105-19200-000',code:'105-19200-000'},
+  {name:'105-23950-000',nameEs:'105-23950-000',code:'105-23950-000'},
+  {name:'105-27150-000',nameEs:'105-27150-000',code:'105-27150-000'},
+  {name:'105-11700-000',nameEs:'105-11700-000',code:'105-11700-000'},
+  {name:'105-14550-000',nameEs:'105-14550-000',code:'105-14550-000'},
+  {name:'105-19250-000',nameEs:'105-19250-000',code:'105-19250-000'},
+  {name:'105-24000-000',nameEs:'105-24000-000',code:'105-24000-000'},
+  {name:'105-27200-000',nameEs:'105-27200-000',code:'105-27200-000'},
+  {name:'105-11750-000',nameEs:'105-11750-000',code:'105-11750-000'},
+  {name:'105-31250-000',nameEs:'105-31250-000',code:'105-31250-000'},
+  {name:'105-19300-000',nameEs:'105-19300-000',code:'105-19300-000'},
+  {name:'105-24100-000',nameEs:'105-24100-000',code:'105-24100-000'},
+  {name:'105-27300-000',nameEs:'105-27300-000',code:'105-27300-000'},
+  {name:'105-11800-000',nameEs:'105-11800-000',code:'105-11800-000'},
+  {name:'105-14650-000',nameEs:'105-14650-000',code:'105-14650-000'},
+  {name:'105-19400-000',nameEs:'105-19400-000',code:'105-19400-000'},
+  {name:'105-24150-000',nameEs:'105-24150-000',code:'105-24150-000'},
+  {name:'105-27350-000',nameEs:'105-27350-000',code:'105-27350-000'},
+  {name:'105-11850-000',nameEs:'105-11850-000',code:'105-11850-000'},
+  {name:'105-14700-000',nameEs:'105-14700-000',code:'105-14700-000'},
+  {name:'105-19500-000',nameEs:'105-19500-000',code:'105-19500-000'},
+  {name:'105-24200-000',nameEs:'105-24200-000',code:'105-24200-000'},
+  {name:'105-27450-000',nameEs:'105-27450-000',code:'105-27450-000'},
+  {name:'105-11900-000',nameEs:'105-11900-000',code:'105-11900-000'},
+  {name:'105-14750-000',nameEs:'105-14750-000',code:'105-14750-000'},
+  {name:'105-19550-000',nameEs:'105-19550-000',code:'105-19550-000'},
+  {name:'105-24250-000',nameEs:'105-24250-000',code:'105-24250-000'},
+  {name:'105-27550-000',nameEs:'105-27550-000',code:'105-27550-000'},
+  {name:'105-11950-000',nameEs:'105-11950-000',code:'105-11950-000'},
+  {name:'105-13800-000',nameEs:'105-13800-000',code:'105-13800-000'},
+  {name:'105-19600-000',nameEs:'105-19600-000',code:'105-19600-000'},
+  {name:'105-24300-000',nameEs:'105-24300-000',code:'105-24300-000'},
+  {name:'105-27650-000',nameEs:'105-27650-000',code:'105-27650-000'},
+  {name:'105-12000-000',nameEs:'105-12000-000',code:'105-12000-000'},
+  {name:'105-13850-000',nameEs:'105-13850-000',code:'105-13850-000'},
+  {name:'105-19650-000',nameEs:'105-19650-000',code:'105-19650-000'},
+  {name:'105-24310-000',nameEs:'105-24310-000',code:'105-24310-000'},
+  {name:'105-27800-000',nameEs:'105-27800-000',code:'105-27800-000'},
+  {name:'105-12500-000',nameEs:'105-12500-000',code:'105-12500-000'},
+  {name:'105-13900-000',nameEs:'105-13900-000',code:'105-13900-000'},
+  {name:'105-19700-000',nameEs:'105-19700-000',code:'105-19700-000'},
+  {name:'105-24340-000',nameEs:'105-24340-000',code:'105-24340-000'},
+  {name:'105-27850-000',nameEs:'105-27850-000',code:'105-27850-000'},
+  {name:'105-12050-000',nameEs:'105-12050-000',code:'105-12050-000'},
+  {name:'105-13950-000',nameEs:'105-13950-000',code:'105-13950-000'},
+  {name:'105-19750-000',nameEs:'105-19750-000',code:'105-19750-000'},
+  {name:'105-24350-000',nameEs:'105-24350-000',code:'105-24350-000'},
+  {name:'105-27900-000',nameEs:'105-27900-000',code:'105-27900-000'},
+  {name:'105-12150-000',nameEs:'105-12150-000',code:'105-12150-000'},
+  {name:'105-13450-000',nameEs:'105-13450-000',code:'105-13450-000'},
+  {name:'105-19000-000',nameEs:'105-19000-000',code:'105-19000-000'},
+  {name:'105-23600-000',nameEs:'105-23600-000',code:'105-23600-000'},
+  {name:'105-26700-000',nameEs:'105-26700-000',code:'105-26700-000'},
+  {name:'105-11500-000',nameEs:'105-11500-000',code:'105-11500-000'},
+  {name:'105-14000-000',nameEs:'105-14000-000',code:'105-14000-000'},
+  {name:'105-19900-000',nameEs:'105-19900-000',code:'105-19900-000'},
+  {name:'105-23120-000',nameEs:'105-23120-000',code:'105-23120-000'},
+  {name:'105-26150-000',nameEs:'105-26150-000',code:'105-26150-000'},
+  {name:'105-13100-000',nameEs:'105-13100-000',code:'105-13100-000'},
+  {name:'105-19900-000',nameEs:'105-19900-000',code:'105-19900-000'},
+  {name:'105-19850-000',nameEs:'105-19850-000',code:'105-19850-000'},
+  {name:'105-28910-000',nameEs:'105-28910-000',code:'105-28910-000'},
+  {name:'105-26100-000',nameEs:'105-26100-000',code:'105-26100-000'},
+  {name:'105-13050-000',nameEs:'105-13050-000',code:'105-13050-000'},
+  {name:'105-14250-000',nameEs:'105-14250-000',code:'105-14250-000'},
+  {name:'105-19450-000',nameEs:'105-19450-000',code:'105-19450-000'},
+  {name:'105-28875-000',nameEs:'105-28875-000',code:'105-28875-000'},
+  {name:'105-25600-000',nameEs:'105-25600-000',code:'105-25600-000'},
+  {name:'105-15700-000',nameEs:'105-15700-000',code:'105-15700-000'},
+  {name:'???',nameEs:'???',code:'???'},
+  {name:'???',nameEs:'???',code:'???'},
+  {name:'105-28300-000',nameEs:'105-28300-000',code:'105-28300-000'},
+  {name:'Billing',nameEs:'Billing',code:'Billing'},
+  {name:'105-15700-000',nameEs:'105-15700-000',code:'105-15700-000'},
+  {name:'???',nameEs:'???',code:'???'},
+  {name:'???',nameEs:'???',code:'???'},
+  {name:'105-28300-000',nameEs:'105-28300-000',code:'105-28300-000'},
+  {name:'Billing',nameEs:'Billing',code:'Billing'},
+  {name:'105-15650-000',nameEs:'105-15650-000',code:'105-15650-000'},
+  {name:'???',nameEs:'???',code:'???'},
+  {name:'???',nameEs:'???',code:'???'},
+  {name:'105-28100-000',nameEs:'105-28100-000',code:'105-28100-000'},
+  {name:'105-15400-000',nameEs:'105-15400-000',code:'105-15400-000'},
+  {name:'145-11000-000',nameEs:'145-11000-000',code:'145-11000-000'},
+  {name:'105-29100-000',nameEs:'105-29100-000',code:'105-29100-000'},
+  {name:'105-32050-000',nameEs:'105-32050-000',code:'105-32050-000'},
+  {name:'105-31400-000',nameEs:'105-31400-000',code:'105-31400-000'},
+  {name:'105-23000-000',nameEs:'105-23000-000',code:'105-23000-000'},
+  {name:'900-14750-000',nameEs:'900-14750-000',code:'900-14750-000'},
+  {name:'105-18900-000',nameEs:'105-18900-000',code:'105-18900-000'},
+  {name:'105-16450-000',nameEs:'105-16450-000',code:'105-16450-000'},
+  {name:'105-26600-000',nameEs:'105-26600-000',code:'105-26600-000'},
+  {name:'105-12300-000',nameEs:'105-12300-000',code:'105-12300-000'},
+  {name:'105-15550-000',nameEs:'105-15550-000',code:'105-15550-000'},
+  {name:'105-19800-000',nameEs:'105-19800-000',code:'105-19800-000'},
+  {name:'105-16500-000',nameEs:'105-16500-000',code:'105-16500-000'},
+  {name:'105-30700-000',nameEs:'105-30700-000',code:'105-30700-000'},
+  {name:'105-33250-000',nameEs:'105-33250-000',code:'105-33250-000'},
+  {name:'105-15200-000',nameEs:'105-15200-000',code:'105-15200-000'},
+  {name:'105-20050-000',nameEs:'105-20050-000',code:'105-20050-000'},
+  {name:'105-31000-000',nameEs:'105-31000-000',code:'105-31000-000'},
+  {name:'105-28400-000',nameEs:'105-28400-000',code:'105-28400-000'},
+  {name:'105-15600-000',nameEs:'105-15600-000',code:'105-15600-000'},
+  {name:'105-16200-000',nameEs:'105-16200-000',code:'105-16200-000'},
+  {name:'900-30800-000',nameEs:'900-30800-000',code:'900-30800-000'},
+  {name:'105-15900-000',nameEs:'105-15900-000',code:'105-15900-000'},
+  {name:'105-28850-000',nameEs:'105-28850-000',code:'105-28850-000'},
+  {name:'105-21800-000',nameEs:'105-21800-000',code:'105-21800-000'},
+  {name:'105-24950-000',nameEs:'105-24950-000',code:'105-24950-000'},
+  {name:'105-16000-000',nameEs:'105-16000-000',code:'105-16000-000'},
+  {name:'105-33700-000',nameEs:'105-33700-000',code:'105-33700-000'},
+  {name:'105-14050-000',nameEs:'105-14050-000',code:'105-14050-000'},
+  {name:'105-19950-000',nameEs:'105-19950-000',code:'105-19950-000'},
+  {name:'105-30800-000',nameEs:'105-30800-000',code:'105-30800-000'},
+  {name:'---',nameEs:'---',code:'---'},
+  {name:'105-12250-000',nameEs:'105-12250-000',code:'105-12250-000'},
+  {name:'105-20000-000',nameEs:'105-20000-000',code:'105-20000-000'},
+  {name:'105-30850-000',nameEs:'105-30850-000',code:'105-30850-000'},
+  {name:'---',nameEs:'---',code:'---'},
+  {name:'105-12250-000',nameEs:'105-12250-000',code:'105-12250-000'},
+  {name:'145-10200-000',nameEs:'145-10200-000',code:'145-10200-000'},
+  {name:'105-22700-000',nameEs:'105-22700-000',code:'105-22700-000'},
+  {name:'105-10000-000',nameEs:'105-10000-000',code:'105-10000-000'},
+  {name:'105-14100-000',nameEs:'105-14100-000',code:'105-14100-000'},
+  {name:'105-10950-000',nameEs:'105-10950-000',code:'105-10950-000'},
+  {name:'900-15650-000',nameEs:'900-15650-000',code:'900-15650-000'},
+  {name:'900-15600-000',nameEs:'900-15600-000',code:'900-15600-000'},
+  {name:'900-15750-000',nameEs:'900-15750-000',code:'900-15750-000'},
+  {name:'900-16800-000',nameEs:'900-16800-000',code:'900-16800-000'},
+  {name:'900-16750-000',nameEs:'900-16750-000',code:'900-16750-000'},
+  {name:'900-16950-000',nameEs:'900-16950-000',code:'900-16950-000'},
+  {name:'900-10550-000',nameEs:'900-10550-000',code:'900-10550-000'},
+  {name:'900-10350-000',nameEs:'900-10350-000',code:'900-10350-000'},
+  {name:'900-10650-000',nameEs:'900-10650-000',code:'900-10650-000'},
+  {name:'900-13200-000',nameEs:'900-13200-000',code:'900-13200-000'},
+  {name:'900-21000-000',nameEs:'900-21000-000',code:'900-21000-000'},
+  {name:'900-17800-000',nameEs:'900-17800-000',code:'900-17800-000'},
+  {name:'900-18950-000',nameEs:'900-18950-000',code:'900-18950-000'},
+  {name:'125-12470-000',nameEs:'125-12470-000',code:'125-12470-000'},
+  {name:'125-12300-000',nameEs:'125-12300-000',code:'125-12300-000'},
+  {name:'125-12480-000',nameEs:'125-12480-000',code:'125-12480-000'},
+  {name:'125-12350-000',nameEs:'125-12350-000',code:'125-12350-000'},
+  {name:'125-23700-000',nameEs:'125-23700-000',code:'125-23700-000'},
+  {name:'125-14250-000',nameEs:'125-14250-000',code:'125-14250-000'},
+  {name:'145-11350-000',nameEs:'145-11350-000',code:'145-11350-000'},
+  {name:'125-16450-000',nameEs:'125-16450-000',code:'125-16450-000'},
+  {name:'120-15900-000',nameEs:'120-15900-000',code:'120-15900-000'},
+  {name:'115-10100-000',nameEs:'115-10100-000',code:'115-10100-000'},
+  {name:'120-21100-000',nameEs:'120-21100-000',code:'120-21100-000'},
+  {name:'115-10700-000',nameEs:'115-10700-000',code:'115-10700-000'},
+  {name:'115-10950-000',nameEs:'115-10950-000',code:'115-10950-000'},
+  {name:'115-11250-000',nameEs:'115-11250-000',code:'115-11250-000'},
+  {name:'115-19550-000',nameEs:'115-19550-000',code:'115-19550-000'},
+  {name:'115-20150-000',nameEs:'115-20150-000',code:'115-20150-000'},
+  {name:'115-19900-000',nameEs:'115-19900-000',code:'115-19900-000'},
+  {name:'115-17250-000',nameEs:'115-17250-000',code:'115-17250-000'},
+  {name:'115-17600-000',nameEs:'115-17600-000',code:'115-17600-000'},
+  {name:'125-17050-000',nameEs:'125-17050-000',code:'125-17050-000'},
+  {name:'125-17100-000',nameEs:'125-17100-000',code:'125-17100-000'},
+  {name:'115-23450-000',nameEs:'115-23450-000',code:'115-23450-000'},
+  {name:'115-20200-000',nameEs:'115-20200-000',code:'115-20200-000'},
+  {name:'120-14800-000',nameEs:'120-14800-000',code:'120-14800-000'},
+  {name:'115-20950-000',nameEs:'115-20950-000',code:'115-20950-000'},
+  {name:'115-11900-000',nameEs:'115-11900-000',code:'115-11900-000'},
+  {name:'115-23100-000',nameEs:'115-23100-000',code:'115-23100-000'},
+  {name:'115-13600-000',nameEs:'115-13600-000',code:'115-13600-000'},
+  {name:'115-23300-000',nameEs:'115-23300-000',code:'115-23300-000'},
+  {name:'115-15450-000',nameEs:'115-15450-000',code:'115-15450-000'},
+  {name:'115-23000-000',nameEs:'115-23000-000',code:'115-23000-000'},
+  {name:'115-11550-000',nameEs:'115-11550-000',code:'115-11550-000'},
+  {name:'115-11400-000',nameEs:'115-11400-000',code:'115-11400-000'},
+  {name:'120-14600-000',nameEs:'120-14600-000',code:'120-14600-000'},
+  {name:'115-11350-000',nameEs:'115-11350-000',code:'115-11350-000'},
+  {name:'120-20200-000',nameEs:'120-20200-000',code:'120-20200-000'},
+  {name:'115-24200-000',nameEs:'115-24200-000',code:'115-24200-000'},
+  {name:'120-12000-000',nameEs:'120-12000-000',code:'120-12000-000'},
+  {name:'115-10550-000',nameEs:'115-10550-000',code:'115-10550-000'},
+  {name:'120-16300-000',nameEs:'120-16300-000',code:'120-16300-000'},
+  {name:'115-10650-000',nameEs:'115-10650-000',code:'115-10650-000'},
+  {name:'120-25550-000',nameEs:'120-25550-000',code:'120-25550-000'},
+  {name:'120-25350-000',nameEs:'120-25350-000',code:'120-25350-000'},
+  {name:'120-18500-000',nameEs:'120-18500-000',code:'120-18500-000'},
+  {name:'120-18300-000',nameEs:'120-18300-000',code:'120-18300-000'},
+  {name:'120-18350-000',nameEs:'120-18350-000',code:'120-18350-000'},
+  {name:'120-18400-000',nameEs:'120-18400-000',code:'120-18400-000'},
+  {name:'120-17750-000',nameEs:'120-17750-000',code:'120-17750-000'},
+  {name:'120-17950-000',nameEs:'120-17950-000',code:'120-17950-000'},
+  {name:'120-18000-000',nameEs:'120-18000-000',code:'120-18000-000'},
+  {name:'120-18050-000',nameEs:'120-18050-000',code:'120-18050-000'},
+  {name:'120-17850-000',nameEs:'120-17850-000',code:'120-17850-000'},
+  {name:'120-18150-000',nameEs:'120-18150-000',code:'120-18150-000'},
+  {name:'120-10600-000',nameEs:'120-10600-000',code:'120-10600-000'},
+  {name:'120-10400-000',nameEs:'120-10400-000',code:'120-10400-000'},
+  {name:'120-10500-000',nameEs:'120-10500-000',code:'120-10500-000'},
+  {name:'120-11900-000',nameEs:'120-11900-000',code:'120-11900-000'},
+  {name:'120-11750-000',nameEs:'120-11750-000',code:'120-11750-000'},
+  {name:'120-27600-000',nameEs:'120-27600-000',code:'120-27600-000'},
+  {name:'120-12650-000',nameEs:'120-12650-000',code:'120-12650-000'},
+  {name:'120-12750-000',nameEs:'120-12750-000',code:'120-12750-000'},
+  {name:'120-27650-000',nameEs:'120-27650-000',code:'120-27650-000'},
+  {name:'120-14050-000',nameEs:'120-14050-000',code:'120-14050-000'},
+  {name:'120-14100-000',nameEs:'120-14100-000',code:'120-14100-000'},
+  {name:'120-14200-000',nameEs:'120-14200-000',code:'120-14200-000'},
+  {name:'120-11500-000',nameEs:'120-11500-000',code:'120-11500-000'},
+  {name:'120-24950-000',nameEs:'120-24950-000',code:'120-24950-000'},
+  {name:'120-25000-000',nameEs:'120-25000-000',code:'120-25000-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'120-20800-000',nameEs:'120-20800-000',code:'120-20800-000'},
+  {name:'120-18700-000',nameEs:'120-18700-000',code:'120-18700-000'},
+  {name:'120-20850-000',nameEs:'120-20850-000',code:'120-20850-000'},
+  {name:'120-20000-000',nameEs:'120-20000-000',code:'120-20000-000'},
+  {name:'120-14850-000',nameEs:'120-14850-000',code:'120-14850-000'},
+  {name:'120-16600-000',nameEs:'120-16600-000',code:'120-16600-000'},
+  {name:'120-16500-000',nameEs:'120-16500-000',code:'120-16500-000'},
+  {name:'120-23400-000',nameEs:'120-23400-000',code:'120-23400-000'},
+  {name:'120-23450-000',nameEs:'120-23450-000',code:'120-23450-000'},
+  {name:'120-11950-000',nameEs:'120-11950-000',code:'120-11950-000'},
+  {name:'120-16850-000',nameEs:'120-16850-000',code:'120-16850-000'},
+  {name:'120-24050-000',nameEs:'120-24050-000',code:'120-24050-000'},
+  {name:'120-30600-000',nameEs:'120-30600-000',code:'120-30600-000'},
+  {name:'120-20100-000',nameEs:'120-20100-000',code:'120-20100-000'},
+  {name:'120-30400-000',nameEs:'120-30400-000',code:'120-30400-000'},
+  {name:'120-15950-000',nameEs:'120-15950-000',code:'120-15950-000'},
+  {name:'120-19250-000',nameEs:'120-19250-000',code:'120-19250-000'},
+  {name:'120-13850-000',nameEs:'120-13850-000',code:'120-13850-000'},
+  {name:'120-29950-000',nameEs:'120-29950-000',code:'120-29950-000'},
+  {name:'120-15350-000',nameEs:'120-15350-000',code:'120-15350-000'},
+  {name:'120-20950-000',nameEs:'120-20950-000',code:'120-20950-000'},
+  {name:'120-21050-000',nameEs:'120-21050-000',code:'120-21050-000'},
+  {name:'120-20050-000',nameEs:'120-20050-000',code:'120-20050-000'},
+  {name:'120-21050-000',nameEs:'120-21050-000',code:'120-21050-000'},
+  {name:'120-22400-000',nameEs:'120-22400-000',code:'120-22400-000'},
+  {name:'120-16900-000',nameEs:'120-16900-000',code:'120-16900-000'},
+  {name:'PENDING',nameEs:'PENDING',code:'PENDING'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'120-23600-000',nameEs:'120-23600-000',code:'120-23600-000'},
+  {name:'120-11700-000',nameEs:'120-11700-000',code:'120-11700-000'},
+  {name:'120-17000-000',nameEs:'120-17000-000',code:'120-17000-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'120-12700-000',nameEs:'120-12700-000',code:'120-12700-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'120-22950-000',nameEs:'120-22950-000',code:'120-22950-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'120-11350-000',nameEs:'120-11350-000',code:'120-11350-000'},
+  {name:'120-16950-000',nameEs:'120-16950-000',code:'120-16950-000'},
+  {name:'120-11200-000',nameEs:'120-11200-000',code:'120-11200-000'},
+  {name:'120-11400-000',nameEs:'120-11400-000',code:'120-11400-000'},
+  {name:'120-11450-000',nameEs:'120-11450-000',code:'120-11450-000'},
+  {name:'120-23700-000',nameEs:'120-23700-000',code:'120-23700-000'},
+  {name:'120-12350-000',nameEs:'120-12350-000',code:'120-12350-000'},
+  {name:'120-17000-000',nameEs:'120-17000-000',code:'120-17000-000'},
+  {name:'120-12400-000',nameEs:'120-12400-000',code:'120-12400-000'},
+  {name:'120-12450-000',nameEs:'120-12450-000',code:'120-12450-000'},
+  {name:'120-12500-000',nameEs:'120-12500-000',code:'120-12500-000'},
+  {name:'120-23750-000',nameEs:'120-23750-000',code:'120-23750-000'},
+  {name:'120-13050-000',nameEs:'120-13050-000',code:'120-13050-000'},
+  {name:'120-17100-000',nameEs:'120-17100-000',code:'120-17100-000'},
+  {name:'120-13100-000',nameEs:'120-13100-000',code:'120-13100-000'},
+  {name:'120-13150-000',nameEs:'120-13150-000',code:'120-13150-000'},
+  {name:'120-13200-000',nameEs:'120-13200-000',code:'120-13200-000'},
+  {name:'120-23800-000',nameEs:'120-23800-000',code:'120-23800-000'},
+  {name:'120-14400-000',nameEs:'120-14400-000',code:'120-14400-000'},
+  {name:'120-17150-000',nameEs:'120-17150-000',code:'120-17150-000'},
+  {name:'120-14450-000',nameEs:'120-14450-000',code:'120-14450-000'},
+  {name:'120-14500-000',nameEs:'120-14500-000',code:'120-14500-000'},
+  {name:'120-14550-000',nameEs:'120-14550-000',code:'120-14550-000'},
+  {name:'120-23850-000',nameEs:'120-23850-000',code:'120-23850-000'},
+  {name:'120-24600-000',nameEs:'120-24600-000',code:'120-24600-000'},
+  {name:'120-24500-000',nameEs:'120-24500-000',code:'120-24500-000'},
+  {name:'120-24750-000',nameEs:'120-24750-000',code:'120-24750-000'},
+  {name:'120-24650-000',nameEs:'120-24650-000',code:'120-24650-000'},
+  {name:'120-24900-000',nameEs:'120-24900-000',code:'120-24900-000'},
+  {name:'120-24800-000',nameEs:'120-24800-000',code:'120-24800-000'},
+  {name:'120-12200-000',nameEs:'120-12200-000',code:'120-12200-000'},
+  {name:'120-24300-000',nameEs:'120-24300-000',code:'120-24300-000'},
+  {name:'120-21200-000',nameEs:'120-21200-000',code:'120-21200-000'},
+  {name:'120-16750-000',nameEs:'120-16750-000',code:'120-16750-000'},
+  {name:'120-24250-000',nameEs:'120-24250-000',code:'120-24250-000'},
+  {name:'120-21250-000',nameEs:'120-21250-000',code:'120-21250-000'},
+  {name:'120-16800-000',nameEs:'120-16800-000',code:'120-16800-000'},
+  {name:'120-17600-000',nameEs:'120-17600-000',code:'120-17600-000'},
+  {name:'120-22850-000',nameEs:'120-22850-000',code:'120-22850-000'},
+  {name:'120-16750-000',nameEs:'120-16750-000',code:'120-16750-000'},
+  {name:'120-22600-000',nameEs:'120-22600-000',code:'120-22600-000'},
+  {name:'120-22700-000',nameEs:'120-22700-000',code:'120-22700-000'},
+  {name:'120-22650-000',nameEs:'120-22650-000',code:'120-22650-000'},
+  {name:'120-13450-000',nameEs:'120-13450-000',code:'120-13450-000'},
+  {name:'120-16700-000',nameEs:'120-16700-000',code:'120-16700-000'},
+  {name:'120-13350-000',nameEs:'120-13350-000',code:'120-13350-000'},
+  {name:'120-13400-000',nameEs:'120-13400-000',code:'120-13400-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'120-14800-000',nameEs:'120-14800-000',code:'120-14800-000'},
+  {name:'120-16550-000',nameEs:'120-16550-000',code:'120-16550-000'},
+  {name:'115-11550-000',nameEs:'115-11550-000',code:'115-11550-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'115-18150-000',nameEs:'115-18150-000',code:'115-18150-000'},
+  {name:'115-18200-000',nameEs:'115-18200-000',code:'115-18200-000'},
+  {name:'120-19800-000',nameEs:'120-19800-000',code:'120-19800-000'},
+  {name:'120-19850-000',nameEs:'120-19850-000',code:'120-19850-000'},
+  {name:'115-17050-000',nameEs:'115-17050-000',code:'115-17050-000'},
+  {name:'120-19450-000',nameEs:'120-19450-000',code:'120-19450-000'},
+  {name:'120-19550-000',nameEs:'120-19550-000',code:'120-19550-000'},
+  {name:'120-19500-000',nameEs:'120-19500-000',code:'120-19500-000'},
+  {name:'120-25950-000',nameEs:'120-25950-000',code:'120-25950-000'},
+  {name:'120-17350-000',nameEs:'120-17350-000',code:'120-17350-000'},
+  {name:'120-23250-000',nameEs:'120-23250-000',code:'120-23250-000'},
+  {name:'120-22550-000',nameEs:'120-22550-000',code:'120-22550-000'},
+  {name:'120-17250-000',nameEs:'120-17250-000',code:'120-17250-000'},
+  {name:'120-23900-000',nameEs:'120-23900-000',code:'120-23900-000'},
+  {name:'120-25850-000',nameEs:'120-25850-000',code:'120-25850-000'},
+  {name:'120-10150-000',nameEs:'120-10150-000',code:'120-10150-000'},
+  {name:'120-17500-000',nameEs:'120-17500-000',code:'120-17500-000'},
+  {name:'120-10100-000',nameEs:'120-10100-000',code:'120-10100-000'},
+  {name:'120-23500-000',nameEs:'120-23500-000',code:'120-23500-000'},
+  {name:'120-25800-000',nameEs:'120-25800-000',code:'120-25800-000'},
+  {name:'120-17400-000',nameEs:'120-17400-000',code:'120-17400-000'},
+  {name:'120-25650-000',nameEs:'120-25650-000',code:'120-25650-000'},
+  {name:'120-25700-000',nameEs:'120-25700-000',code:'120-25700-000'},
+  {name:'120-26250-000',nameEs:'120-26250-000',code:'120-26250-000'},
+  {name:'120-23300-000',nameEs:'120-23300-000',code:'120-23300-000'},
+  {name:'120-11050-000',nameEs:'120-11050-000',code:'120-11050-000'},
+  {name:'120-17250-000',nameEs:'120-17250-000',code:'120-17250-000'},
+  {name:'120-10700-000',nameEs:'120-10700-000',code:'120-10700-000'},
+  {name:'120-11000-000',nameEs:'120-11000-000',code:'120-11000-000'},
+  {name:'120-10950-000',nameEs:'120-10950-000',code:'120-10950-000'},
+  {name:'120-23950-000',nameEs:'120-23950-000',code:'120-23950-000'},
+  {name:'120-26300-000',nameEs:'120-26300-000',code:'120-26300-000'},
+  {name:'120-26350-000',nameEs:'120-26350-000',code:'120-26350-000'},
+  {name:'120-17550-000',nameEs:'120-17550-000',code:'120-17550-000'},
+  {name:'120-20200-000',nameEs:'120-20200-000',code:'120-20200-000'},
+  {name:'120-24150-000',nameEs:'120-24150-000',code:'120-24150-000'},
+  {name:'115-20400-000',nameEs:'115-20400-000',code:'115-20400-000'},
+  {name:'115-14650-000',nameEs:'115-14650-000',code:'115-14650-000'},
+  {name:'115-14700-000',nameEs:'115-14700-000',code:'115-14700-000'},
+  {name:'115-14750-000',nameEs:'115-14750-000',code:'115-14750-000'},
+  {name:'115-14600-000',nameEs:'115-14600-000',code:'115-14600-000'},
+  {name:'115-10150-000',nameEs:'115-10150-000',code:'115-10150-000'},
+  {name:'115-13650-000',nameEs:'115-13650-000',code:'115-13650-000'},
+  {name:'115-10750-000',nameEs:'115-10750-000',code:'115-10750-000'},
+  {name:'115-24150-000',nameEs:'115-24150-000',code:'115-24150-000'},
+  {name:'120-21700-000',nameEs:'120-21700-000',code:'120-21700-000'},
+  {name:'115-22300-000',nameEs:'115-22300-000',code:'115-22300-000'},
+  {name:'135-10750-000',nameEs:'135-10750-000',code:'135-10750-000'},
+  {name:'135-11200-000',nameEs:'135-11200-000',code:'135-11200-000'},
+  {name:'135-10700-000',nameEs:'135-10700-000',code:'135-10700-000'},
+  {name:'135-14050-000',nameEs:'135-14050-000',code:'135-14050-000'},
+  {name:'135-10000-000',nameEs:'135-10000-000',code:'135-10000-000'},
+  {name:'135-10125-000',nameEs:'135-10125-000',code:'135-10125-000'},
+  {name:'105-10750-000',nameEs:'105-10750-000',code:'105-10750-000'},
+  {name:'135-11700-000',nameEs:'135-11700-000',code:'135-11700-000'},
+  {name:'135-13650-000',nameEs:'135-13650-000',code:'135-13650-000'},
+  {name:'135-11750-000',nameEs:'135-11750-000',code:'135-11750-000'},
+  {name:'135-12450-000',nameEs:'135-12450-000',code:'135-12450-000'},
+  {name:'135-11400-000',nameEs:'135-11400-000',code:'135-11400-000'},
+  {name:'115-15750-000',nameEs:'115-15750-000',code:'115-15750-000'},
+  {name:'135-13950-000',nameEs:'135-13950-000',code:'135-13950-000'},
+  {name:'135-14000-000',nameEs:'135-14000-000',code:'135-14000-000'},
+  {name:'135-14450-000',nameEs:'135-14450-000',code:'135-14450-000'},
+  {name:'135-14150-000',nameEs:'135-14150-000',code:'135-14150-000'},
+  {name:'135-14200-000',nameEs:'135-14200-000',code:'135-14200-000'},
+  {name:'135-11150-000',nameEs:'135-11150-000',code:'135-11150-000'},
+  {name:'150-10150-000',nameEs:'150-10150-000',code:'150-10150-000'},
+  {name:'150-10250-000',nameEs:'150-10250-000',code:'150-10250-000'},
+  {name:'120-18600-000',nameEs:'120-18600-000',code:'120-18600-000'},
+  {name:'155-11750-000',nameEs:'155-11750-000',code:'155-11750-000'},
+  {name:'155-11800-000',nameEs:'155-11800-000',code:'155-11800-000'},
+  {name:'125-22250-000',nameEs:'125-22250-000',code:'125-22250-000'},
+  {name:'125-22500-000',nameEs:'125-22500-000',code:'125-22500-000'},
+  {name:'125-22550-000',nameEs:'125-22550-000',code:'125-22550-000'},
+  {name:'125-16700-000',nameEs:'125-16700-000',code:'125-16700-000'},
+  {name:'105-33750-000',nameEs:'105-33750-000',code:'105-33750-000'},
+  {name:'115-16450-000',nameEs:'115-16450-000',code:'115-16450-000'},
+  {name:'115-22400-000',nameEs:'115-22400-000',code:'115-22400-000'},
+  {name:'Billing?',nameEs:'Billing?',code:'Billing?'},
+  {name:'Billing?',nameEs:'Billing?',code:'Billing?'},
+  {name:'155-11550-000',nameEs:'155-11550-000',code:'155-11550-000'},
+  {name:'155-10100-000',nameEs:'155-10100-000',code:'155-10100-000'},
+  {name:'120-15650-000',nameEs:'120-15650-000',code:'120-15650-000'},
+  {name:'125-15600-000',nameEs:'125-15600-000',code:'125-15600-000'},
+  {name:'130-13150-000',nameEs:'130-13150-000',code:'130-13150-000'},
+  {name:'130-12950-000',nameEs:'130-12950-000',code:'130-12950-000'},
+  {name:'125-21400-000',nameEs:'125-21400-000',code:'125-21400-000'},
+  {name:'125-18750-000',nameEs:'125-18750-000',code:'125-18750-000'},
+  {name:'125-18350-000',nameEs:'125-18350-000',code:'125-18350-000'},
+  {name:'125-18150-000',nameEs:'125-18150-000',code:'125-18150-000'},
+  {name:'125-18250-000',nameEs:'125-18250-000',code:'125-18250-000'},
+  {name:'125-18200-000',nameEs:'125-18200-000',code:'125-18200-000'},
+  {name:'125-18900-000',nameEs:'125-18900-000',code:'125-18900-000'},
+  {name:'125-20900-000',nameEs:'125-20900-000',code:'125-20900-000'},
+  {name:'125-12750-000',nameEs:'125-12750-000',code:'125-12750-000'},
+  {name:'125-13050-000',nameEs:'125-13050-000',code:'125-13050-000'},
+  {name:'125-12700-000',nameEs:'125-12700-000',code:'125-12700-000'},
+  {name:'125-12850-000',nameEs:'125-12850-000',code:'125-12850-000'},
+  {name:'125-12800-000',nameEs:'125-12800-000',code:'125-12800-000'},
+  {name:'125-12900-000',nameEs:'125-12900-000',code:'125-12900-000'},
+  {name:'125-15850-000',nameEs:'125-15850-000',code:'125-15850-000'},
+  {name:'125-16150-000',nameEs:'125-16150-000',code:'125-16150-000'},
+  {name:'125-15800-000',nameEs:'125-15800-000',code:'125-15800-000'},
+  {name:'125-15950-000',nameEs:'125-15950-000',code:'125-15950-000'},
+  {name:'125-15900-000',nameEs:'125-15900-000',code:'125-15900-000'},
+  {name:'125-16000-000',nameEs:'125-16000-000',code:'125-16000-000'},
+  {name:'125-18150-000',nameEs:'125-18150-000',code:'125-18150-000'},
+  {name:'125-12500-000',nameEs:'125-12500-000',code:'125-12500-000'},
+  {name:'125-12550-000',nameEs:'125-12550-000',code:'125-12550-000'},
+  {name:'125-18300-000',nameEs:'125-18300-000',code:'125-18300-000'},
+  {name:'125-21400-000',nameEs:'125-21400-000',code:'125-21400-000'},
+  {name:'125-19250-000',nameEs:'125-19250-000',code:'125-19250-000'},
+  {name:'125-19550-000',nameEs:'125-19550-000',code:'125-19550-000'},
+  {name:'125-19200-000',nameEs:'125-19200-000',code:'125-19200-000'},
+  {name:'125-19350-000',nameEs:'125-19350-000',code:'125-19350-000'},
+  {name:'125-19300-000',nameEs:'125-19300-000',code:'125-19300-000'},
+  {name:'125-19400-000',nameEs:'125-19400-000',code:'125-19400-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'125-21700-000',nameEs:'125-21700-000',code:'125-21700-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'125-17300-000',nameEs:'125-17300-000',code:'125-17300-000'},
+  {name:'125-17600-000',nameEs:'125-17600-000',code:'125-17600-000'},
+  {name:'125-17250-000',nameEs:'125-17250-000',code:'125-17250-000'},
+  {name:'125-17400-000',nameEs:'125-17400-000',code:'125-17400-000'},
+  {name:'125-17350-000',nameEs:'125-17350-000',code:'125-17350-000'},
+  {name:'125-17450-000',nameEs:'125-17450-000',code:'125-17450-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'125-17750-000',nameEs:'125-17750-000',code:'125-17750-000'},
+  {name:'125-18050-000',nameEs:'125-18050-000',code:'125-18050-000'},
+  {name:'125-17700-000',nameEs:'125-17700-000',code:'125-17700-000'},
+  {name:'125-17850-000',nameEs:'125-17850-000',code:'125-17850-000'},
+  {name:'125-17800-000',nameEs:'125-17800-000',code:'125-17800-000'},
+  {name:'125-17900-000',nameEs:'125-17900-000',code:'125-17900-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'125-21300-000',nameEs:'125-21300-000',code:'125-21300-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'125-20450-000',nameEs:'125-20450-000',code:'125-20450-000'},
+  {name:'125-20750-000',nameEs:'125-20750-000',code:'125-20750-000'},
+  {name:'125-20400-000',nameEs:'125-20400-000',code:'125-20400-000'},
+  {name:'125-20550-000',nameEs:'125-20550-000',code:'125-20550-000'},
+  {name:'125-20500-000',nameEs:'125-20500-000',code:'125-20500-000'},
+  {name:'125-20600-000',nameEs:'125-20600-000',code:'125-20600-000'},
+  {name:'155-10750-000',nameEs:'155-10750-000',code:'155-10750-000'},
+  {name:'155-11050-000',nameEs:'155-11050-000',code:'155-11050-000'},
+  {name:'155-10700-000',nameEs:'155-10700-000',code:'155-10700-000'},
+  {name:'155-10850-000',nameEs:'155-10850-000',code:'155-10850-000'},
+  {name:'155-10800-000',nameEs:'155-10800-000',code:'155-10800-000'},
+  {name:'155-10900-000',nameEs:'155-10900-000',code:'155-10900-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'155-11700-000',nameEs:'155-11700-000',code:'155-11700-000'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'--',nameEs:'--',code:'--'},
+  {name:'125-17050-000',nameEs:'125-17050-000',code:'125-17050-000'},
+  {name:'125-17100-000',nameEs:'125-17100-000',code:'125-17100-000'},
+  {name:'125-13200-000',nameEs:'125-13200-000',code:'125-13200-000'},
+  {name:'125-13300-000',nameEs:'125-13300-000',code:'125-13300-000'},
+  {name:'125-13400-000',nameEs:'125-13400-000',code:'125-13400-000'},
+  {name:'125-13500-000',nameEs:'125-13500-000',code:'125-13500-000'},
+  {name:'115-24100-000',nameEs:'115-24100-000',code:'115-24100-000'},
+  {name:'115-24050-000',nameEs:'115-24050-000',code:'115-24050-000'},
+  {name:'115-20350-000',nameEs:'115-20350-000',code:'115-20350-000'},
+  {name:'115-16575-000',nameEs:'115-16575-000',code:'115-16575-000'},
+  {name:'115-15950-000',nameEs:'115-15950-000',code:'115-15950-000'},
+  {name:'900-11550-000',nameEs:'900-11550-000',code:'900-11550-000'},
+  {name:'125-10800-000',nameEs:'125-10800-000',code:'125-10800-000'},
+  {name:'900-11600-000',nameEs:'900-11600-000',code:'900-11600-000'},
+  {name:'900-11650-000',nameEs:'900-11650-000',code:'900-11650-000'},
+  {name:'900-11700-000',nameEs:'900-11700-000',code:'900-11700-000'},
+  {name:'900-11750-000',nameEs:'900-11750-000',code:'900-11750-000'},
+  {name:'900-14250-000',nameEs:'900-14250-000',code:'900-14250-000'},
+  {name:'900-14300-000',nameEs:'900-14300-000',code:'900-14300-000'},
+  {name:'900-14350-000',nameEs:'900-14350-000',code:'900-14350-000'},
+  {name:'900-14500-000',nameEs:'900-14500-000',code:'900-14500-000'},
+  {name:'900-14400-000',nameEs:'900-14400-000',code:'900-14400-000'},
+  {name:'900-14600-000',nameEs:'900-14600-000',code:'900-14600-000'},
+  {name:'125-11900-000',nameEs:'125-11900-000',code:'125-11900-000'},
+  {name:'125-11950-000',nameEs:'125-11950-000',code:'125-11950-000'},
+  {name:'125-22000-000',nameEs:'125-22000-000',code:'125-22000-000'},
+  {name:'125-12000-000',nameEs:'125-12000-000',code:'125-12000-000'},
+  {name:'125-12050-000',nameEs:'125-12050-000',code:'125-12050-000'},
+  {name:'125-12100-000',nameEs:'125-12100-000',code:'125-12100-000'},
+  {name:'120-19000-000',nameEs:'120-19000-000',code:'120-19000-000'},
+  {name:'120-19050-000',nameEs:'120-19050-000',code:'120-19050-000'},
+  {name:'120-19100-000',nameEs:'120-19100-000',code:'120-19100-000'},
+  {name:'120-27800-000',nameEs:'120-27800-000',code:'120-27800-000'},
+  {name:'120-28000-000',nameEs:'120-28000-000',code:'120-28000-000'},
+  {name:'120-28050-000',nameEs:'120-28050-000',code:'120-28050-000'},
+  {name:'120-28100-000',nameEs:'120-28100-000',code:'120-28100-000'},
+  {name:'120-28150-000',nameEs:'120-28150-000',code:'120-28150-000'},
+  {name:'120-19150-000',nameEs:'120-19150-000',code:'120-19150-000'},
+  {name:'120-19200-000',nameEs:'120-19200-000',code:'120-19200-000'},
+  {name:'130-11250-000',nameEs:'130-11250-000',code:'130-11250-000'},
+  {name:'130-13050-000',nameEs:'130-13050-000',code:'130-13050-000'},
+  {name:'130-12200-000',nameEs:'130-12200-000',code:'130-12200-000'},
+  {name:'915-20000-000',nameEs:'915-20000-000',code:'915-20000-000'},
+  {name:'915-22100-000',nameEs:'915-22100-000',code:'915-22100-000'},
+  {name:'915-21050-000',nameEs:'915-21050-000',code:'915-21050-000'},
+  {name:'915-21200-000',nameEs:'915-21200-000',code:'915-21200-000'},
+  {name:'915-19350-000',nameEs:'915-19350-000',code:'915-19350-000'},
+  {name:'915-22900-000',nameEs:'915-22900-000',code:'915-22900-000'},
+  {name:'915-22850-000',nameEs:'915-22850-000',code:'915-22850-000'},
+  {name:'915-23250-000',nameEs:'915-23250-000',code:'915-23250-000'},
+  {name:'125-14000-000',nameEs:'125-14000-000',code:'125-14000-000'},
+  {name:'120-21800-000',nameEs:'120-21800-000',code:'120-21800-000'},
+  {name:'120-22050-000',nameEs:'120-22050-000',code:'120-22050-000'},
+  {name:'120-21950-000',nameEs:'120-21950-000',code:'120-21950-000'},
+  {name:'120-22100-000',nameEs:'120-22100-000',code:'120-22100-000'},
+  {name:'120-22000-000',nameEs:'120-22000-000',code:'120-22000-000'},
+  {name:'120-21750-000',nameEs:'120-21750-000',code:'120-21750-000'},
+  {name:'120-21850-000',nameEs:'120-21850-000',code:'120-21850-000'},
+  {name:'120-22150-000',nameEs:'120-22150-000',code:'120-22150-000'},
+  {name:'115-21200-000',nameEs:'115-21200-000',code:'115-21200-000'},
+  {name:'115-21250-000',nameEs:'115-21250-000',code:'115-21250-000'},
+  {name:'135-11800-000',nameEs:'135-11800-000',code:'135-11800-000'},
+  {name:'135-11900-000',nameEs:'135-11900-000',code:'135-11900-000'},
+  {name:'135-14950-000',nameEs:'135-14950-000',code:'135-14950-000'},
+  {name:'135-10650-000',nameEs:'135-10650-000',code:'135-10650-000'},
+  {name:'120-10650-000',nameEs:'120-10650-000',code:'120-10650-000'},
+  {name:'120-10750-000',nameEs:'120-10750-000',code:'120-10750-000'},
+  {name:'120-12050-000',nameEs:'120-12050-000',code:'120-12050-000'},
+  {name:'120-12900-000',nameEs:'120-12900-000',code:'120-12900-000'},
+  {name:'120-14250-000',nameEs:'120-14250-000',code:'120-14250-000'},
+  {name:'115-22000-000',nameEs:'115-22000-000',code:'115-22000-000'},
+  {name:'115-21000-000',nameEs:'115-21000-000',code:'115-21000-000'},
+  {name:'135-11600-000',nameEs:'135-11600-000',code:'135-11600-000'},
+  {name:'135-11500-000',nameEs:'135-11500-000',code:'135-11500-000'},
+  {name:'130-12450-000',nameEs:'130-12450-000',code:'130-12450-000'},
+  {name:'130-12500-000',nameEs:'130-12500-000',code:'130-12500-000'},
+  {name:'130-12600-000',nameEs:'130-12600-000',code:'130-12600-000'},
+  {name:'120-13750-000',nameEs:'120-13750-000',code:'120-13750-000'},
+  {name:'120-13800-000',nameEs:'120-13800-000',code:'120-13800-000'},
+  {name:'120-27050-000',nameEs:'120-27050-000',code:'120-27050-000'},
+  {name:'120-26950-000',nameEs:'120-26950-000',code:'120-26950-000'},
+  {name:'120-13700-000',nameEs:'120-13700-000',code:'120-13700-000'},
+  {name:'120-26900-000',nameEs:'120-26900-000',code:'120-26900-000'},
+  {name:'120-26550-000',nameEs:'120-26550-000',code:'120-26550-000'},
+  {name:'120-26600-000',nameEs:'120-26600-000',code:'120-26600-000'},
+  {name:'130-11900-000',nameEs:'130-11900-000',code:'130-11900-000'},
+  {name:'120-26650-000',nameEs:'120-26650-000',code:'120-26650-000'},
+  {name:'120-26700-000',nameEs:'120-26700-000',code:'120-26700-000'},
+  {name:'905-10350-000',nameEs:'905-10350-000',code:'905-10350-000'},
+  {name:'120-28200-000',nameEs:'120-28200-000',code:'120-28200-000'},
+  {name:'900-11650-000',nameEs:'900-11650-000',code:'900-11650-000'},
+  {name:'310-10850-000',nameEs:'310-10850-000',code:'310-10850-000'},
+  {name:'900-11700-000',nameEs:'900-11700-000',code:'900-11700-000'},
+  {name:'310-10900-000',nameEs:'310-10900-000',code:'310-10900-000'},
+  {name:'900-11750-000',nameEs:'900-11750-000',code:'900-11750-000'},
+  {name:'115-24200-000',nameEs:'115-24200-000',code:'115-24200-000'},
+  {name:'120-10400-000',nameEs:'120-10400-000',code:'120-10400-000'},
+  {name:'120-21600-000',nameEs:'120-21600-000',code:'120-21600-000'},
+  {name:'150-10500-000',nameEs:'150-10500-000',code:'150-10500-000'},
+  {name:'120-29150-000',nameEs:'120-29150-000',code:'120-29150-000'},
+  {name:'120-18650-000',nameEs:'120-18650-000',code:'120-18650-000'},
+  {name:'120-22200-000',nameEs:'120-22200-000',code:'120-22200-000'},
+  {name:'905-10150-000',nameEs:'905-10150-000',code:'905-10150-000'},
+  {name:'905-11950-000',nameEs:'905-11950-000',code:'905-11950-000'},
+  {name:'105-33150-000',nameEs:'105-33150-000',code:'105-33150-000'},
+  {name:'105-30350-000',nameEs:'105-30350-000',code:'105-30350-000'},
+  {name:'105-12350-000',nameEs:'105-12350-000',code:'105-12350-000'},
+  {name:'105-12400-000',nameEs:'105-12400-000',code:'105-12400-000'},
+  {name:'120-15000-000',nameEs:'120-15000-000',code:'120-15000-000'},
+  {name:'120-15025-000',nameEs:'120-15025-000',code:'120-15025-000'},
+  {name:'135-16300-000',nameEs:'135-16300-000',code:'135-16300-000'},
+  {name:'135-16350-000',nameEs:'135-16350-000',code:'135-16350-000'},
+  {name:'105-11450-000',nameEs:'105-11450-000',code:'105-11450-000'},
+  {name:'105-18980-000',nameEs:'105-18980-000',code:'105-18980-000'},
+  {name:'105-33650-000',nameEs:'105-33650-000',code:'105-33650-000'},
+  {name:'105-18960-000',nameEs:'105-18960-000',code:'105-18960-000'}\n];
+
+// ── DEMO CATALOG (fallback if not deployed via setup script) ───
+const DEMO = [
+  {name:'14/2 Romex Wire (250ft)',nameEs:'Cable Romex 14/2',code:'WR-1420'},
+  {name:'12/2 Romex Wire (250ft)',nameEs:'Cable Romex 12/2',code:'WR-1220'},
+  {name:'10/3 Romex Wire (100ft)',nameEs:'Cable Romex 10/3',code:'WR-1030'},
+  {name:'20A Single Pole Breaker',nameEs:'Breaker Monopolar 20A',code:'BR-20SP'},
+  {name:'30A Double Pole Breaker',nameEs:'Breaker Bipolar 30A',code:'BR-30DP'},
+  {name:'60A Double Pole Breaker',nameEs:'Breaker Bipolar 60A',code:'BR-60DP'},
+  {name:'100A Main Breaker',nameEs:'Breaker Principal 100A',code:'BR-100M'},
+  {name:'200A Panel 40-Space',nameEs:'Panel 200A 40 Espacios',code:'PNL-200-40'},
+  {name:'3/4" EMT Conduit (10ft)',nameEs:'Conduit EMT 3/4"',code:'CN-075E'},
+  {name:'1" EMT Conduit (10ft)',nameEs:'Conduit EMT 1"',code:'CN-100E'},
+  {name:'2" PVC Conduit (10ft)',nameEs:'Conduit PVC 2"',code:'CN-200P'},
+  {name:'Single Gang Metal Box',nameEs:'Caja Metalica Simple',code:'BOX-1GM'},
+  {name:'Double Gang Metal Box',nameEs:'Caja Metalica Doble',code:'BOX-2GM'},
+  {name:'4" Square Box',nameEs:'Caja Cuadrada 4"',code:'BOX-4SQ'},
+  {name:'1/2" EMT Connector',nameEs:'Conector EMT 1/2"',code:'FIT-050CC'},
+  {name:'3/4" EMT Connector',nameEs:'Conector EMT 3/4"',code:'FIT-075CC'},
+  {name:'Wire Nuts Red (100pk)',nameEs:'Conectores Rojos 100pz',code:'WN-RED-100'},
+  {name:'Wire Nuts Yellow (100pk)',nameEs:'Conectores Amarillos 100pz',code:'WN-YEL-100'},
+  {name:'15A Duplex Receptacle',nameEs:'Tomacorriente Duplex 15A',code:'REC-15D'},
+  {name:'20A Duplex Receptacle',nameEs:'Tomacorriente Duplex 20A',code:'REC-20D'},
+  {name:'20A GFCI Receptacle',nameEs:'Tomacorriente GFCI 20A',code:'REC-GFCI-20'},
+  {name:'15A Single Pole Switch',nameEs:'Interruptor Monopolar 15A',code:'SW-SP15'},
+  {name:'15A 3-Way Switch',nameEs:'Interruptor 3 Vias 15A',code:'SW-3W15'},
+  {name:'600W LED Dimmer Switch',nameEs:'Dimmer LED 600W',code:'SW-DIM600'},
+  {name:'Single Outlet Cover Plate',nameEs:'Placa Tomacorriente',code:'PLT-SP'},
+  {name:'Single Switch Cover Plate',nameEs:'Placa Interruptor',code:'PLT-SW'},
+  {name:'6" LED Recessed Can Light',nameEs:'Luminaria Empotrada 6"',code:'LT-RC6'},
+  {name:'4ft Vapor Tight Fixture',nameEs:'Luminaria Hermetica 4ft',code:'LT-VT4'},
+  {name:'LED Exit Sign w/ Battery',nameEs:'Letrero Salida LED',code:'LT-EXIT'},
+  {name:'50ft 12ga Extension Cord',nameEs:'Extension 12ga 50ft',code:'TOOL-EC50'},
+  {name:'Electrical Tape (10pk)',nameEs:'Cinta Electrica 10pz',code:'TOOL-ETAPE'},
+  {name:'8ft Copper Ground Rod',nameEs:'Varilla Tierra Cobre 8ft',code:'GRD-8CU'},
+  {name:'Ground Rod Clamp',nameEs:'Abrazadera de Tierra',code:'GRD-CLAMP'},
+];
+
+// ── INIT ───────────────────────────────────────────────────────
+window.onload = () => {
+  try { if (!localStorage.getItem('fs_script_url')) { localStorage.setItem('fs_script_url', 'https://script.google.com/macros/s/AKfycbyOqpMUD6_yXGerlyD_JRWBoaIGyVNmUxWPPydeJZtidHShpoSOQzZgJEOa14Qu26bh/exec'); } } catch(e) {}
+  catalog = (BAKED_CATALOG && BAKED_CATALOG.length > 0) ? BAKED_CATALOG : DEMO.map(i => ({...i}));
+  const tmrw = new Date(); tmrw.setDate(tmrw.getDate() + 1);
+  document.getElementById('oDate').value = tmrw.toISOString().split('T')[0];
+  renderHistory();
+};
+
+// ── LANGUAGE ───────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.getElementById('btnEN').classList.toggle('active', l === 'en');
+  document.getElementById('btnES').classList.toggle('active', l === 'es');
+  document.querySelectorAll('.t[data-en]').forEach(el => {
+    el.textContent = el.getAttribute('data-' + l) || el.getAttribute('data-en');
+  });
+  renderCart('ord'); renderCart('ret'); renderHistory();
+}
+function iName(item) { return lang === 'es' && item.nameEs ? item.nameEs : item.name; }
+
+// ── PAGE NAV ───────────────────────────────────────────────────
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(el => el.classList.remove('active'));
+  document.getElementById('p' + cap(p)).classList.add('active');
+  document.getElementById('n' + cap(p)).classList.add('active');
+  if (p === 'hist') renderHistory();
+}
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ── SEARCH ─────────────────────────────────────────────────────
+function doSearch(type) {
+  const iId = type === 'ord' ? 'oSearch' : 'rSearch';
+  const rId = type === 'ord' ? 'oRes' : 'rRes';
+  const q = document.getElementById(iId).value.trim().toLowerCase();
+  const box = document.getElementById(rId);
+  if (!q) { box.classList.remove('open'); box.innerHTML = ''; return; }
+  const hits = catalog.filter(i =>
+    iName(i).toLowerCase().includes(q) || i.name.toLowerCase().includes(q) || i.code.toLowerCase().includes(q)
+  ).slice(0, 14);
+  if (!hits.length) {
+    box.innerHTML = '<div class="ri" style="color:var(--mu)">' + (lang === 'es' ? 'Sin resultados' : 'No items found') + '</div>';
+  } else {
+    const hl = txt => {
+      const idx = txt.toLowerCase().indexOf(q);
+      if (idx < 0) return eh(txt);
+      return eh(txt.slice(0, idx)) + '<b style="color:var(--or)">' + eh(txt.slice(idx, idx + q.length)) + '</b>' + eh(txt.slice(idx + q.length));
+    };
+    box.innerHTML = hits.map(i =>
+      '<div class="ri" onclick="addItem(\'' + type + '\',\'' + ea(i.name) + '\',\'' + ea(i.nameEs || i.name) + '\',\'' + ea(i.code) + '\')">' + hl(iName(i)) + '</div>'
+    ).join('');
+  }
+  box.classList.add('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.sw') && !e.target.closest('.sr'))
+    document.querySelectorAll('.sr').forEach(el => el.classList.remove('open'));
+});
+
+// ── CART ───────────────────────────────────────────────────────
+function addItem(type, name, nameEs, code) {
+  const ex = carts[type].find(i => i.code === code);
+  if (ex) ex.qty++; else carts[type].push({name, nameEs, code, qty: 1, reason: ''});
+  document.getElementById(type === 'ord' ? 'oSearch' : 'rSearch').value = '';
+  document.getElementById(type === 'ord' ? 'oRes' : 'rRes').classList.remove('open');
+  renderCart(type);
+}
+function changeQty(type, code, delta) {
+  const item = carts[type].find(i => i.code === code); if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  const el = document.getElementById('qi_' + type + '_' + sid(code)); if (el) el.value = item.qty;
+  updateSum(type);
+}
+function setQty(type, code, val) {
+  const item = carts[type].find(i => i.code === code); if (!item) return;
+  const n = parseInt(val); item.qty = isNaN(n) || n < 1 ? 1 : n; updateSum(type);
+}
+function removeItem(type, code) { carts[type] = carts[type].filter(i => i.code !== code); renderCart(type); }
+function setReason(type, code, val) { const item = carts[type].find(i => i.code === code); if (item) item.reason = val; }
+function updateSum(type) {
+  const pfx = type === 'ord' ? 'o' : 'r';
+  document.getElementById(pfx + 'Units').textContent = carts[type].reduce((s, i) => s + i.qty, 0);
+  document.getElementById(pfx + 'Lines').textContent = carts[type].length;
+}
+function renderCart(type) {
+  const cart = carts[type]; const isRet = type === 'ret';
+  const listEl = document.getElementById(isRet ? 'rList' : 'oList');
+  updateSum(type);
+  if (!cart.length) {
+    const msg = lang === 'es' ? 'Sin articulos - busca arriba.' : (isRet ? 'No items yet - search above.' : 'No items yet - search above.');
+    listEl.innerHTML = '<div class="empty"><div class="eico">' + (isRet ? '&#8617;' : '&#128203;') + '</div>' + msg + '</div>'; return;
+  }
+  const qLbl = lang === 'es' ? (isRet ? 'Cant. a Devolver' : 'Cant. Necesaria') : (isRet ? 'Qty to Return' : 'Qty Needed');
+  const rPh  = lang === 'es' ? 'Razon (ej. pedido de mas)' : 'Reason (e.g. over-ordered, wrong spec)';
+  listEl.innerHTML = cart.map(item => {
+    const id = sid(item.code);
+    return '<div class="ir">' +
+      '<div class="itop"><div class="iname">' + eh(iName(item)) + '</div>' +
+      '<button class="rmbtn" onclick="removeItem(\'' + type + '\',\'' + ea(item.code) + '\')">&#128465;</button></div>' +
+      '<div class="qrow"><span class="ql">' + qLbl + '</span>' +
+      '<div class="qc">' +
+      '<button class="qbtn" onclick="changeQty(\'' + type + '\',\'' + ea(item.code) + '\',-1)">&#8722;</button>' +
+      '<input type="number" class="qi" id="qi_' + type + '_' + id + '" value="' + item.qty + '" min="1"' +
+      ' oninput="setQty(\'' + type + '\',\'' + ea(item.code) + '\',this.value)"' +
+      ' onblur="this.value=carts[\'' + type + '\'].find(i=>i.code===\'' + ea(item.code) + '\')?.qty||1">' +
+      '<button class="qbtn" onclick="changeQty(\'' + type + '\',\'' + ea(item.code) + '\',1)">+</button>' +
+      '</div></div>' +
+      (isRet ? '<div class="rw"><input type="text" class="ri2" placeholder="' + ea(rPh) + '" value="' + ea(item.reason) + '" oninput="setReason(\'' + type + '\',\'' + ea(item.code) + '\',this.value)"></div>' : '') +
+      '</div>';
+  }).join('');
+}
+
+// ── REVIEW MODAL ───────────────────────────────────────────────
+function openReview(type) {
+  const isOrd = type === 'ord';
+  const worker  = document.getElementById(isOrd ? 'oWorker' : 'rWorker').value.trim();
+  const project = document.getElementById(isOrd ? 'oProject' : 'rProject').value.trim();
+  const email   = document.getElementById(isOrd ? 'oEmail'   : 'rEmail').value.trim();
+  const cart    = carts[type];
+  if (!worker)      { alert(lang === 'es' ? 'Ingresa tu nombre.' : 'Please enter your name.'); return; }
+  if (!project)     { alert(lang === 'es' ? 'Ingresa el proyecto.' : 'Please enter a project / job #.'); return; }
+  if (!cart.length) { alert(lang === 'es' ? 'Agrega al menos un articulo.' : 'Add at least one item first.'); return; }
+  if (!email)       { alert(lang === 'es' ? 'Ingresa un correo.' : 'Please enter a recipient email.'); return; }
+
+  activeModal = type;
+  const dateVal = isOrd ? document.getElementById('oDate').value : '';
+  const ts = new Date().toLocaleString();
+  const isRet = !isOrd;
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  const acHex = isOrd ? '#FF6B00' : '#3B82F6';
+  const acVar = isOrd ? 'var(--or)' : 'var(--bl)';
+  const qHdr  = isOrd ? 'Qty Needed' : 'Qty Returned';
+  const dateFmt = isOrd && dateVal
+    ? new Date(dateVal + 'T12:00:00').toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric'}) : '';
+
+  // Save to history
+  histData.unshift({id: Date.now(), type, worker, project, date: dateVal, submitted: ts, email, items: cart.map(i => ({...i}))});
+  try { localStorage.setItem('fs_hist', JSON.stringify(histData)); } catch(e) {}
+
+  // Set modal state
+  document.getElementById('modalInner').className = isOrd ? 'modal' : 'modal ret-modal';
+  document.getElementById('mTitle').textContent = isOrd
+    ? (lang === 'es' ? 'Revisar Pedido' : 'Review Order')
+    : (lang === 'es' ? 'Revisar Devolucion' : 'Review Return');
+  document.getElementById('confirmBtn').className = 'btn ' + (isOrd ? 'bto' : 'btb');
+
+  // Summary
+  document.getElementById('pvSummary').innerHTML =
+    '<b>' + eh(worker) + '</b> &nbsp;&middot;&nbsp; ' + eh(project) +
+    (dateFmt ? '<br><span style="color:var(--mu)">Delivery: ' + dateFmt + '</span>' : '') +
+    '<br><span style="color:var(--mu)">' + eh(email) + '</span>' +
+    '<br><span style="color:' + acVar + '">' + total + ' units &nbsp;&middot;&nbsp; ' + cart.length + ' line' + (cart.length !== 1 ? 's' : '') + '</span>';
+
+  // Build table
+  const thS = 'background:#1C1E22;color:#7A7D85;font-family:Barlow Condensed,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 10px;border-bottom:2px solid ' + acHex + ';white-space:nowrap;';
+  let html = '<thead><tr>';
+  html += '<th style="' + thS + 'text-align:center;">#</th>';
+  html += '<th style="' + thS + '">Item Name</th>';
+  html += '<th style="' + thS + 'text-align:center;">Item Code</th>';
+  html += '<th style="' + thS + 'text-align:center;">' + qHdr + '</th>';
+  if (isRet) html += '<th style="' + thS + '">Reason</th>';
+  html += '</tr></thead><tbody>';
+  cart.forEach((item, idx) => {
+    const bg = idx % 2 === 0 ? '#1C1E22' : '#242629';
+    const td = 'background:' + bg + ';padding:9px 10px;border-bottom:1px solid #2E3035;vertical-align:middle;user-select:text;cursor:text;';
+    html += '<tr>';
+    html += '<td style="' + td + 'color:#7A7D85;font-size:12px;text-align:center;">' + (idx + 1) + '</td>';
+    html += '<td style="' + td + 'color:#E8E9EB;font-size:13px;font-weight:600;">' + eh(iName(item)) + '</td>';
+    html += '<td style="' + td + 'color:#7A7D85;font-size:12px;text-align:center;font-family:monospace;">' + eh(item.code) + '</td>';
+    html += '<td style="' + td + 'color:' + acHex + ';font-family:Barlow Condensed,sans-serif;font-size:24px;font-weight:900;text-align:center;">' + item.qty + '</td>';
+    if (isRet) html += '<td style="' + td + 'color:#7A7D85;font-size:12px;font-style:italic;">' + eh(item.reason || '-') + '</td>';
+    html += '</tr>';
+  });
+  const ft = 'background:#111214;padding:9px 10px;font-family:Barlow Condensed,sans-serif;font-weight:700;letter-spacing:1px;text-transform:uppercase;user-select:text;';
+  html += '<tfoot><tr>';
+  html += '<td style="' + ft + 'color:#7A7D85;font-size:11px;text-align:center;"></td>';
+  html += '<td style="' + ft + 'color:#7A7D85;font-size:11px;text-align:right;" colspan="2">TOTAL UNITS</td>';
+  html += '<td style="' + ft + 'color:' + acHex + ';font-size:24px;font-weight:900;text-align:center;">' + total + '</td>';
+  if (isRet) html += '<td style="' + ft + '"></td>';
+  html += '</tr></tfoot>';
+  document.getElementById('emailTable').innerHTML = html;
+
+  // Build plain text for clipboard
+  const subject = '[FieldStock] ' + (isOrd ? 'Material Order' : 'Return') + ' - ' + project + ' - ' + worker;
+  const div = '----------------------------------------';
+  const nameW = Math.max(...cart.map(i => iName(i).length), 8) + 2;
+  const codeW = Math.max(...cart.map(i => i.code.length), 9) + 2;
+  const qW = Math.max(qHdr.length, 4) + 2;
+  const pad  = (s, l) => String(s).padEnd(l, ' ');
+  const padR = (s, l) => String(s).padStart(l, ' ');
+  let plain = 'TO: ' + email + '\nSUBJECT: ' + subject + '\n\n';
+  plain += (isOrd ? 'MATERIAL ORDER' : 'RETURN REQUEST') + '\n' + div + '\n';
+  plain += 'Technician: ' + worker + '\nJob #:      ' + project + '\n';
+  if (dateFmt) plain += 'Delivery:   ' + dateFmt + '\n';
+  plain += 'Submitted:  ' + ts + '\n' + div + '\n\n';
+  let hdr = pad('#', 4) + pad('Item Name', nameW) + pad('Item Code', codeW) + padR(qHdr, qW);
+  if (isRet) hdr += '  Reason';
+  plain += hdr + '\n' + '-'.repeat(hdr.length) + '\n';
+  cart.forEach((item, idx) => {
+    let ln = pad(idx + 1, 4) + pad(iName(item), nameW) + pad(item.code, codeW) + padR(item.qty, qW);
+    if (isRet) ln += '  ' + (item.reason || '-');
+    plain += ln + '\n';
+  });
+  plain += '-'.repeat(hdr.length) + '\n' + pad('', 4 + nameW + codeW) + 'TOTAL: ' + total + '\n';
+  document.getElementById('emailBox').value = plain;
+
+  // Reset copy button
+  const cb = document.getElementById('copyEmail');
+  cb.classList.remove('copied');
+  const sp = cb.querySelector('span.t');
+  if (sp) sp.textContent = lang === 'es' ? 'Copiar Correo' : 'Copy as Email Text';
+
+  // Show review, hide success
+  document.getElementById('mReview').classList.remove('hidden');
+  document.getElementById('mSuccess').classList.add('hidden');
+  document.getElementById('sendStatus').className = 'ss';
+
+  // Open modal
+  document.getElementById('mbg').classList.add('open');
+
+  // Send to Google Sheets
+  sendToSheets(type, worker, project, dateVal, email, cart, ts);
+}
+
+// ── SEND TO SHEETS ─────────────────────────────────────────────
+async function sendToSheets(type, worker, project, dateVal, email, cart, ts) {
+  if (!scriptUrl) {
+    showSS('idle', '&#9888; No Google Sheets URL configured. Data saved to local history only.');
+    return;
+  }
+  showSS('sending', '&#8987; Sending to Google Sheets...');
+  const payload = {
+    type: type === 'ord' ? 'order' : 'return',
+    worker, project, deliveryDate: dateVal, email, ts,
+    items: cart.map(i => ({name: i.name, code: i.code, qty: i.qty, reason: i.reason || ''}))
+  };
+  try {
+    await fetch(scriptUrl, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    showSS('ok', '\u2713 Sent to Google Sheets successfully.');
+  } catch(e) {
+    showSS('err', '&#10060; Could not reach Google Sheets. Data saved locally.');
+  }
+}
+function showSS(state, msg) {
+  const el = document.getElementById('sendStatus');
+  el.className = 'ss show ss-' + state;
+  el.innerHTML = msg;
+}
+
+// ── COPY EMAIL ─────────────────────────────────────────────────
+function copyEmail() {
+  const text = document.getElementById('emailBox').value;
+  const btn = document.getElementById('copyEmail');
+  const sp = btn.querySelector('span.t');
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    if (sp) sp.textContent = '\u2713 Copied!';
+    setTimeout(() => { btn.classList.remove('copied'); if (sp) sp.textContent = lang === 'es' ? 'Copiar Correo' : 'Copy as Email Text'; }, 2500);
+  }).catch(() => {
+    const ta = document.getElementById('emailBox');
+    ta.style.cssText = 'width:100%;height:100px;opacity:1;pointer-events:auto;position:static;margin-bottom:8px;';
+    ta.select();
+    alert(lang === 'es' ? 'Texto seleccionado - presiona Ctrl+C' : 'Text selected - press Ctrl+C to copy');
+  });
+}
+
+// ── MODAL CONTROLS ─────────────────────────────────────────────
+function submitDone() {
+  document.getElementById('mReview').classList.add('hidden');
+  document.getElementById('sTitle').textContent = activeModal === 'ord'
+    ? (lang === 'es' ? 'Pedido Enviado!' : 'Order Submitted!')
+    : (lang === 'es' ? 'Devolucion Enviada!' : 'Return Submitted!');
+  document.getElementById('sMsg').textContent = lang === 'es'
+    ? 'Guardado en historial local.'
+    : 'Saved to local history.';
+  document.getElementById('mSuccess').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('mbg').classList.remove('open'); }
+function bgClick(e)   { if (e.target === document.getElementById('mbg')) closeModal(); }
+function resetAndClose() {
+  const type = activeModal; const isOrd = type === 'ord';
+  carts[type] = [];
+  document.getElementById(isOrd ? 'oWorker' : 'rWorker').value = '';
+  document.getElementById(isOrd ? 'oProject' : 'rProject').value = '';
+  document.getElementById(isOrd ? 'oSearch' : 'rSearch').value = '';
+  renderCart(type); closeModal();
+}
+
+// ── HISTORY ────────────────────────────────────────────────────
+function renderHistory() {
+  const q = (document.getElementById('hSearch')?.value || '').trim().toLowerCase();
+  const list = document.getElementById('histList');
+  const filtered = histData.filter(e => !q ||
+    e.worker.toLowerCase().includes(q) ||
+    e.project.toLowerCase().includes(q) ||
+    e.submitted.toLowerCase().includes(q)
+  );
+  if (!filtered.length) {
+    const msg = q ? (lang === 'es' ? 'Sin resultados.' : 'No results.') : (lang === 'es' ? 'Sin historial aun.' : 'No history yet.');
+    list.innerHTML = '<div class="empty"><div class="eico">&#128344;</div>' + msg + '</div>'; return;
+  }
+  const lw = lang === 'es' ? 'lineas' : 'lines';
+  list.innerHTML = filtered.map(e => {
+    const isOrd = e.type === 'ord';
+    const badge = isOrd ? (lang === 'es' ? 'PEDIDO' : 'ORDER') : (lang === 'es' ? 'DEVOLUCION' : 'RETURN');
+    const ac = isOrd ? 'var(--or)' : 'var(--bl)';
+    const dl = isOrd && e.date
+      ? (lang === 'es' ? 'Entrega' : 'Delivery') + ': ' + new Date(e.date + 'T12:00:00').toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', {month:'short',day:'numeric'})
+      : e.submitted;
+    const total = e.items.reduce((s, i) => s + i.qty, 0);
+    return '<div class="he">' +
+      '<div class="hh" onclick="toggleHist(' + e.id + ')">' +
+        '<div><span class="hbg ' + (isOrd ? 'hbo' : 'hbr') + '">' + badge + '</span>' +
+        '<div class="ht">' + eh(e.project) + '</div>' +
+        '<div class="hm">' + eh(e.worker) + ' &middot; ' + dl + '</div></div>' +
+        '<div class="hcnt">' + e.items.length + '<br><span style="font-size:11px;color:var(--mu)">' + lw + '</span></div>' +
+      '</div>' +
+      '<div class="hbd" id="hb_' + e.id + '">' +
+        '<div style="overflow-x:auto;border-radius:6px;border:1px solid var(--br);margin-bottom:10px;">' +
+        '<table style="width:100%;border-collapse:collapse;font-size:12px;">' +
+        '<thead><tr>' +
+        '<th style="background:var(--dk);color:var(--mu);padding:6px 8px;text-align:left;font-family:Barlow Condensed,sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Item</th>' +
+        '<th style="background:var(--dk);color:var(--mu);padding:6px 8px;text-align:center;font-family:Barlow Condensed,sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Code</th>' +
+        '<th style="background:var(--dk);color:var(--mu);padding:6px 8px;text-align:center;font-family:Barlow Condensed,sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Qty</th>' +
+        (isOrd ? '' : '<th style="background:var(--dk);color:var(--mu);padding:6px 8px;font-family:Barlow Condensed,sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Reason</th>') +
+        '</tr></thead><tbody>' +
+        e.items.map((i, idx) => {
+          const bg = idx % 2 === 0 ? 'var(--md)' : 'var(--pn)';
+          return '<tr>' +
+            '<td style="background:' + bg + ';padding:6px 8px;color:var(--tx);user-select:text;">' + eh(lang === 'es' && i.nameEs ? i.nameEs : i.name) + '</td>' +
+            '<td style="background:' + bg + ';padding:6px 8px;color:var(--mu);text-align:center;font-family:monospace;user-select:text;">' + eh(i.code) + '</td>' +
+            '<td style="background:' + bg + ';padding:6px 8px;color:' + ac + ';font-family:Barlow Condensed,sans-serif;font-size:16px;font-weight:900;text-align:center;user-select:text;">' + i.qty + '</td>' +
+            (isOrd ? '' : '<td style="background:' + bg + ';padding:6px 8px;color:var(--mu);font-style:italic;user-select:text;">' + (i.reason || '-') + '</td>') +
+          '</tr>';
+        }).join('') +
+        '<tr><td colspan="' + (isOrd ? 3 : 4) + '" style="background:var(--dk);padding:6px 8px;color:var(--mu);font-family:Barlow Condensed,sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;text-align:right;">TOTAL: <span style="color:' + ac + ';font-size:14px;font-weight:900;">' + total + '</span></td></tr>' +
+        '</tbody></table></div>' +
+        '<div class="hacts">' +
+          '<button class="habtn hrs" onclick="resendToSheets(' + e.id + ')">&#8679; Resend</button>' +
+          '<button class="habtn hcp" onclick="histCopyEmail(' + e.id + ')">&#128203; Copy Email</button>' +
+          '<button class="habtn hdl" onclick="deleteHist(' + e.id + ')">' + (lang === 'es' ? 'Eliminar' : 'Delete') + '</button>' +
+        '</div>' +
+      '</div></div>';
+  }).join('');
+}
+function toggleHist(id) { document.getElementById('hb_' + id).classList.toggle('open'); }
+
+async function resendToSheets(id) {
+  const e = histData.find(x => x.id === id); if (!e) return;
+  if (!scriptUrl) { alert('No Google Sheets URL configured.'); return; }
+  const btn = event.target; btn.textContent = 'Sending...'; btn.disabled = true;
+  const payload = {
+    type: e.type === 'ord' ? 'order' : 'return',
+    worker: e.worker, project: e.project, deliveryDate: e.date,
+    email: e.email, ts: e.submitted,
+    items: e.items.map(i => ({name: i.name, code: i.code, qty: i.qty, reason: i.reason || ''}))
+  };
+  try {
+    await fetch(scriptUrl, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+    btn.textContent = '\u2713 Sent!';
+    setTimeout(() => { btn.textContent = '\u8679 Resend'; btn.disabled = false; }, 2000);
+  } catch(err) { btn.textContent = 'Failed'; btn.disabled = false; }
+}
+
+function histCopyEmail(id) {
+  const e = histData.find(x => x.id === id); if (!e) return;
+  const isOrd = e.type === 'ord';
+  const subject = '[FieldStock] ' + (isOrd ? 'Material Order' : 'Return') + ' - ' + e.project + ' - ' + e.worker;
+  const nameW = Math.max(...e.items.map(i => i.name.length), 8) + 2;
+  const codeW = Math.max(...e.items.map(i => i.code.length), 9) + 2;
+  const qHdr = isOrd ? 'Qty Needed' : 'Qty Returned';
+  const qW = Math.max(qHdr.length, 4) + 2;
+  const pad  = (s, l) => String(s).padEnd(l, ' ');
+  const padR = (s, l) => String(s).padStart(l, ' ');
+  const div = '----------------------------------------';
+  let plain = 'TO: ' + e.email + '\nSUBJECT: ' + subject + '\n\n';
+  plain += (isOrd ? 'MATERIAL ORDER' : 'RETURN REQUEST') + '\n' + div + '\n';
+  plain += 'Technician: ' + e.worker + '\nJob #:      ' + e.project + '\n';
+  if (isOrd && e.date) plain += 'Delivery:   ' + e.date + '\n';
+  plain += 'Submitted:  ' + e.submitted + '\n' + div + '\n\n';
+  let hdr = pad('#', 4) + pad('Item Name', nameW) + pad('Item Code', codeW) + padR(qHdr, qW);
+  if (!isOrd) hdr += '  Reason';
+  plain += hdr + '\n' + '-'.repeat(hdr.length) + '\n';
+  const total = e.items.reduce((s, i) => s + i.qty, 0);
+  e.items.forEach((item, idx) => {
+    let ln = pad(idx + 1, 4) + pad(item.name, nameW) + pad(item.code, codeW) + padR(item.qty, qW);
+    if (!isOrd) ln += '  ' + (item.reason || '-');
+    plain += ln + '\n';
+  });
+  plain += '-'.repeat(hdr.length) + '\n' + pad('', 4 + nameW + codeW) + 'TOTAL: ' + total + '\n';
+  navigator.clipboard.writeText(plain)
+    .then(() => alert(lang === 'es' ? 'Email copiado!' : 'Email copied! Paste into your email app.'))
+    .catch(() => prompt('Copy this:', plain));
+}
+
+function deleteHist(id) {
+  if (!confirm(lang === 'es' ? 'Eliminar este registro?' : 'Delete this entry?')) return;
+  histData = histData.filter(x => x.id !== id);
+  try { localStorage.setItem('fs_hist', JSON.stringify(histData)); } catch(e) {}
+  renderHistory();
+}
+
+// ── UTILS ──────────────────────────────────────────────────────
+function eh(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function ea(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function sid(s) { return String(s).replace(/[^a-z0-9]/gi,'_'); }
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
