@@ -153,6 +153,18 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
         <input type="text" id="oWorker" placeholder="e.g. Mike Torres"></div>
       <div><div class="cl t" data-en="Project / Job #" data-es="Proyecto / Trabajo #">Project / Job #</div>
         <input type="text" id="oProject" placeholder="e.g. Eastside Substation #2241"></div>
+      <div>
+        <div class="cl t" data-en="Project Manager" data-es="Gerente de Proyecto">Project Manager</div>
+        <select id="oPM" style="width:100%;background:var(--md);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:'Barlow',sans-serif;font-size:15px;padding:11px 13px;outline:none;-webkit-appearance:none;">
+          <option value="">Select Project Manager...</option>
+        <option value="Alex">Alex</option>
+        <option value="Damian">Damian</option>
+        <option value="Patrick">Patrick</option>
+        <option value="Ronnie">Ronnie</option>
+        <option value="Steve">Steve</option>
+        <option value="Zach">Zach</option>
+        </select>
+      </div>
       <div><div class="cl t" data-en="Delivery Date Needed" data-es="Fecha de Entrega">Delivery Date Needed</div>
         <input type="date" id="oDate"></div>
     </div>
@@ -173,8 +185,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="empty"><div class="eico">&#128203;</div><span class="t" data-en="No items yet - search above." data-es="Sin articulos - busca arriba.">No items yet - search above.</span></div>
   </div>
   <div style="margin-top:16px;">
-    <div class="cl t" data-en="Recipient Email" data-es="Correo Destinatario">Recipient Email</div>
-    <input type="email" id="oEmail" placeholder="warehouse@company.com" style="margin-bottom:12px;">
     <button class="btn bto" onclick="openReview('ord')">
       <span class="t" data-en="Review &amp; Submit Order" data-es="Revisar y Enviar Pedido">Review &amp; Submit Order</span>
     </button>
@@ -208,8 +218,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="empty"><div class="eico">&#8617;</div><span class="t" data-en="No items yet - search above." data-es="Sin articulos - busca arriba.">No items yet - search above.</span></div>
   </div>
   <div style="margin-top:16px;">
-    <div class="cl t" data-en="Recipient Email" data-es="Correo Destinatario">Recipient Email</div>
-    <input type="email" id="rEmail" placeholder="warehouse@company.com" style="margin-bottom:12px;">
     <button class="btn btb" onclick="openReview('ret')">
       <span class="t" data-en="Review &amp; Submit Return" data-es="Revisar y Enviar Devolucion">Review &amp; Submit Return</span>
     </button>
@@ -281,7 +289,7 @@ let histData = [];
 let scriptUrl = '';
 
 try { histData  = JSON.parse(localStorage.getItem('fs_hist') || '[]'); } catch(e) { histData = []; }
-scriptUrl = 'https://script.google.com/macros/s/AKfycbyOqpMUD6_yXGerlyD_JRWBoaIGyVNmUxWPPydeJZtidHShpoSOQzZgJEOa14Qu26bh/exec';
+scriptUrl = 'https://script.google.com/macros/s/AKfycbwGRASl_Psnw2GbngzUp-kA3XlESPnppbL4zNAzt-FB3XLLcmFB-ZLAz7yyCzhViV6b/exec';
 
 // ── BAKED CATALOG (replaced by setup script at deploy time) ────
 // BAKED_CATALOG_PLACEHOLDER
@@ -498,12 +506,13 @@ function openReview(type) {
   const isOrd = type === 'ord';
   const worker  = document.getElementById(isOrd ? 'oWorker' : 'rWorker').value.trim();
   const project = document.getElementById(isOrd ? 'oProject' : 'rProject').value.trim();
-  const email   = document.getElementById(isOrd ? 'oEmail'   : 'rEmail').value.trim();
+  const pm      = isOrd ? (document.getElementById('oPM')?.value || '') : '';
   const cart    = carts[type];
   if (!worker)      { alert(lang === 'es' ? 'Ingresa tu nombre.' : 'Please enter your name.'); return; }
   if (!project)     { alert(lang === 'es' ? 'Ingresa el proyecto.' : 'Please enter a project / job #.'); return; }
+  if (isOrd && !pm) { alert(lang === 'es' ? 'Selecciona un gerente de proyecto.' : 'Please select a Project Manager.'); return; }
   if (!cart.length) { alert(lang === 'es' ? 'Agrega al menos un articulo.' : 'Add at least one item first.'); return; }
-  if (!email)       { alert(lang === 'es' ? 'Ingresa un correo.' : 'Please enter a recipient email.'); return; }
+  const email = '';
 
   activeModal = type;
   const dateVal = isOrd ? document.getElementById('oDate').value : '';
@@ -517,7 +526,7 @@ function openReview(type) {
     ? new Date(dateVal + 'T12:00:00').toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric'}) : '';
 
   // Save to history
-  histData.unshift({id: Date.now(), type, worker, project, date: dateVal, submitted: ts, email, items: cart.map(i => ({...i}))});
+  histData.unshift({id: Date.now(), type, worker, project, pm, date: dateVal, submitted: ts, email, items: cart.map(i => ({...i}))});
   try { localStorage.setItem('fs_hist', JSON.stringify(histData)); } catch(e) {}
 
   // Set modal state
@@ -530,8 +539,8 @@ function openReview(type) {
   // Summary
   document.getElementById('pvSummary').innerHTML =
     '<b>' + eh(worker) + '</b> &nbsp;&middot;&nbsp; ' + eh(project) +
+    (isOrd && pm ? ' &nbsp;&middot;&nbsp; <span style="color:var(--or)">PM: ' + eh(pm) + '</span>' : '') +
     (dateFmt ? '<br><span style="color:var(--mu)">Delivery: ' + dateFmt + '</span>' : '') +
-    '<br><span style="color:var(--mu)">' + eh(email) + '</span>' +
     '<br><span style="color:' + acVar + '">' + total + ' units &nbsp;&middot;&nbsp; ' + cart.length + ' line' + (cart.length !== 1 ? 's' : '') + '</span>';
 
   // Build table
@@ -602,16 +611,16 @@ function openReview(type) {
   document.getElementById('mbg').classList.add('open');
 
   // Send to Google Sheets
-  sendToSheets(type, worker, project, dateVal, email, cart, ts);
+  sendToSheets(type, worker, project, pm, dateVal, cart, ts);
 }
 
 // ── SEND TO SHEETS ─────────────────────────────────────────────
-async function sendToSheets(type, worker, project, dateVal, email, cart, ts) {
+async function sendToSheets(type, worker, project, pm, dateVal, cart, ts) {
   // scriptUrl is hardcoded - always configured
   showSS('sending', '&#8987; Sending to Google Sheets...');
   const payload = {
     type: type === 'ord' ? 'order' : 'return',
-    worker, project, deliveryDate: dateVal, email, ts,
+    worker, project, projectManager: pm, deliveryDate: dateVal, ts,
     items: cart.map(i => ({name: i.name, code: i.code, qty: i.qty, reason: i.reason || ''}))
   };
   try {
@@ -667,6 +676,7 @@ function resetAndClose() {
   document.getElementById(isOrd ? 'oWorker' : 'rWorker').value = '';
   document.getElementById(isOrd ? 'oProject' : 'rProject').value = '';
   document.getElementById(isOrd ? 'oSearch' : 'rSearch').value = '';
+  if (isOrd) { const pm = document.getElementById('oPM'); if (pm) pm.value = ''; }
   renderCart(type); closeModal();
 }
 
@@ -696,7 +706,7 @@ function renderHistory() {
       '<div class="hh" onclick="toggleHist(' + e.id + ')">' +
         '<div><span class="hbg ' + (isOrd ? 'hbo' : 'hbr') + '">' + badge + '</span>' +
         '<div class="ht">' + eh(e.project) + '</div>' +
-        '<div class="hm">' + eh(e.worker) + ' &middot; ' + dl + '</div></div>' +
+        '<div class="hm">' + eh(e.worker) + (e.pm ? ' &middot; PM: ' + eh(e.pm) : '') + ' &middot; ' + dl + '</div></div>' +
         '<div class="hcnt">' + e.items.length + '<br><span style="font-size:11px;color:var(--mu)">' + lw + '</span></div>' +
       '</div>' +
       '<div class="hbd" id="hb_' + e.id + '">' +
