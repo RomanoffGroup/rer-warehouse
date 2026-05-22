@@ -150,7 +150,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="sec t" data-en="Worker &amp; Job Info" data-es="Trabajador e Info">Worker &amp; Job Info</div>
     <div style="display:grid;gap:10px;">
       <div><div class="cl t" data-en="Your Name" data-es="Tu Nombre">Your Name</div>
-        <input type="text" id="oWorker" placeholder="e.g. Mike Torres"></div>
+        <input type="text" id="oWorker" placeholder="e.g. Mike Torres" oninput="saveWorkerName(this.value)"></div>
       <div><div class="cl t" data-en="Project / Job #" data-es="Proyecto / Trabajo #">Project / Job #</div>
         <input type="text" id="oProject" placeholder="e.g. Eastside Substation #2241"></div>
       <div>
@@ -197,7 +197,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="sec t" data-en="Worker &amp; Job Info" data-es="Trabajador e Info">Worker &amp; Job Info</div>
     <div style="display:grid;gap:10px;">
       <div><div class="cl t" data-en="Your Name" data-es="Tu Nombre">Your Name</div>
-        <input type="text" id="rWorker" placeholder="e.g. Mike Torres"></div>
+        <input type="text" id="rWorker" placeholder="e.g. Mike Torres" oninput="saveWorkerName(this.value)"></div>
       <div><div class="cl t" data-en="Project / Job #" data-es="Proyecto / Trabajo #">Project / Job #</div>
         <input type="text" id="rProject" placeholder="e.g. Eastside Substation #2241"></div>
     </div>
@@ -336,6 +336,16 @@ const DEMO = [
 window.onload = () => {
   const tmrw = new Date(); tmrw.setDate(tmrw.getDate() + 1);
   document.getElementById('oDate').value = tmrw.toISOString().split('T')[0];
+
+  // Restore saved worker name
+  try {
+    const savedName = localStorage.getItem('fs_worker_name') || '';
+    if (savedName) {
+      document.getElementById('oWorker').value = savedName;
+      document.getElementById('rWorker').value = savedName;
+    }
+  } catch(e) {}
+
   catalog = DEMO.map(i => ({...i}));
   setCatalogMsg('Loading catalog...', 'idle');
   fetchCatalog();
@@ -673,7 +683,7 @@ function bgClick(e)   { if (e.target === document.getElementById('mbg')) closeMo
 function resetAndClose() {
   const type = activeModal; const isOrd = type === 'ord';
   carts[type] = [];
-  document.getElementById(isOrd ? 'oWorker' : 'rWorker').value = '';
+  // Worker name intentionally preserved - saved per device
   document.getElementById(isOrd ? 'oProject' : 'rProject').value = '';
   document.getElementById(isOrd ? 'oSearch' : 'rSearch').value = '';
   if (isOrd) { const pm = document.getElementById('oPM'); if (pm) pm.value = ''; }
@@ -792,6 +802,16 @@ function deleteHist(id) {
   histData = histData.filter(x => x.id !== id);
   try { localStorage.setItem('fs_hist', JSON.stringify(histData)); } catch(e) {}
   renderHistory();
+}
+
+// ── WORKER NAME PERSISTENCE ───────────────────────────────────
+function saveWorkerName(val) {
+  try { localStorage.setItem('fs_worker_name', val); } catch(e) {}
+  // Keep both tabs in sync
+  const other = document.getElementById(
+    document.getElementById('oWorker').value === val ? 'rWorker' : 'oWorker'
+  );
+  if (other && other.value !== val) other.value = val;
 }
 
 // ── UTILS ──────────────────────────────────────────────────────
